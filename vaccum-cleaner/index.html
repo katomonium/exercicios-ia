@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<header>
+	<meta charset="utf-8" />
+	<title>2D Vaccum Cleaner</title>
+</header>
+<body>
+	<header>
+		<h1>2D Vaccum Cleaner</h1>
+	</header>
+	<main>
+		<div id="btns">
+			<button id="LEFT">Left</button>
+			<button id="DOWN">Down</button>
+			<button id="UP">Up</button>
+			<button id="RIGHT">Right</button>
+			<button id="SUCK">Suck</button>
+		</div>
+		<div id="world">
+			<div id="r1" class="robot"></div>
+
+			<div id="rooms">
+				<div class="room" style="top: 20px;">A</div>
+				<div class="room" style="top: 20px;">B</div>
+				<!--<div class="room" style="top: 20px; left: 250px;">C</div>-->
+				<!--<div class="room" style="top: 250px; left: 250px;">D</div>-->
+			</div>
+		</div>
+	</main>
+
+	<style>
+		.room {
+			width: 100px;
+			height: 20px;
+			position: relative;
+			border: 1px solid black;
+		}
+
+		#world {
+			margin-top: 50px;
+			position: absolute;
+		}
+
+		.robot {
+			width: 100px;
+			height: 100px;
+			background: green;
+			position: relative;
+			
+			animation-fill-mode: both;
+		}
+	</style>
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+	<script src="actions.js"></script>
+</body>
+</html>
