@@ -23,11 +23,18 @@ $(document).ready(function() {
 		// alert(this.id);
 		rooms[this.id] = false;
 		$("#"+this.id).css("background-color", "red");
-		cleanRoom(roomTheRobotIs);
+		// cleanRoom(roomTheRobotIs);
 	});
 	automaticMode();
 
 });
+function wait(ms) {
+    var start = Date.now(),
+        now = start;
+    while (now - start < ms) {
+      now = Date.now();
+    }
+}
 
 function cleanRoom(roomId){
 	if(rooms[roomId] == false){
@@ -39,7 +46,7 @@ function cleanRoom(roomId){
 				rooms[roomId] = true;
 
 			}, 
-			1000
+			2000
 		);
 	}
 }
@@ -90,42 +97,46 @@ function up() {
 }
 
 function automaticMode(){
-	if(roomTheRobotIs == 0){
-		
+	console.log("loco");
+	if(rooms[roomTheRobotIs] == false){
+		console.log("entrou if");
+		cleanRoom(roomTheRobotIs);
+		setTimeout(
+			() => {automaticMode()},
+			2000
+		);
 	}
-	switch(roomTheRobotIs){
-		case 0:
-			cleanRoom(0);
-			right();
-			setTimeout(
-				() => {automaticMode()},
-				2000
-			);
-			break;
-		case 1:
-			cleanRoom(1);
-			down();
-			setTimeout(
-				() => {automaticMode()},
-				2000
-			);
-			break;
-		case 2:
-			cleanRoom(2);
-			up();
-			setTimeout(
-				() => {automaticMode()},
-				2000
-			);
-			break;
-		case 3:
-			cleanRoom(3);
-			left();
-			setTimeout(
-				() => {automaticMode()},
-				2000
-			);
-			break;
-
+	else{
+		console.log("else");
+		switch(roomTheRobotIs){
+			case 0:
+				right();
+				setTimeout(
+					() => {automaticMode()},
+					2000
+				);
+				break;
+			case 1:
+				down();
+				setTimeout(
+					() => {automaticMode()},
+					2000
+				);
+				break;
+			case 2:
+				up();
+				setTimeout(
+					() => {automaticMode()},
+					2000
+				);
+				break;
+			case 3:
+				left();
+				setTimeout(
+					() => {automaticMode()},
+					2000
+				);
+				break;
+		}
 	}
 }
