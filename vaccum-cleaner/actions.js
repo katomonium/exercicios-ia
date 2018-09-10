@@ -1,5 +1,7 @@
 var roomTheRobotIs = 0;
 var rooms = [true, true, true, true];
+var dirtyness = [0, 0, 0, 0];
+let DIRTY_AMOUNT = 15
 
 $(document).ready(function() {	
 
@@ -22,27 +24,21 @@ $(document).ready(function() {
 	$('.room').click(function() {
 		// alert(this.id);
 		rooms[this.id] = false;
-		$("#"+this.id).css("background-color", "red");
-		// cleanRoom(roomTheRobotIs);
+		increaseDirty(this.id);
 	});
 	automaticMode();
 
 });
-function wait(ms) {
-    var start = Date.now(),
-        now = start;
-    while (now - start < ms) {
-      now = Date.now();
-    }
-}
 
 function cleanRoom(roomId){
 	if(rooms[roomId] == false){
+		dirtyness[roomTheRobotIs] = 0;
 		$('#action').text("Cleaning...")
 		setTimeout(
 			() => {
 				$('#action').text("")
 				$("#"+roomId).css("background-color", "white");
+				$("#"+roomId).text(dirtyness[roomId]);
 				rooms[roomId] = true;
 
 			}, 
@@ -96,8 +92,103 @@ function up() {
 	$('#r1').animate({top: '0px'});
 }
 
+function goToNextRoom(){
+	switch(roomTheRobotIs){
+		case 0:
+			right();
+			break;
+		case 1:
+			down();
+			break;
+		case 2:
+			up();
+			break;
+		case 3:
+			left();
+			break;
+	}
+}
+
+function goToPreviousRoom(){
+	switch(roomTheRobotIs){
+		case 0:
+			down();
+			break;
+		case 1:
+			left();
+			break;
+		case 2:
+			right();
+			break;
+		case 3:
+			up();
+			break;
+	}
+}
+
+function getNextRoom(){
+	switch(roomTheRobotIs){
+		case 0:
+			return 1;
+			break;
+		case 1:
+			return 3;
+			break;
+		case 2:
+			return 0;
+			break;
+		case 3:
+			return 2;
+			break;
+	}
+}
+
+function getPreviousRoom(){
+	switch(roomTheRobotIs){
+		case 1:
+			return 0;
+			break;
+		case 3:
+			return 1;
+			break;
+		case 0:
+			return 2;
+			break;
+		case 2:
+			return 3;
+			break;
+	}
+}
+
+function decideRoom(){
+	if(dirtyness[getNextRoom()] > dirtyness[getPreviousRoom()]){
+		goToNextRoom();
+	}
+	else{
+		goToPreviousRoom();
+	}
+}
+
+function automaticDirty(){
+	for(var i = 0; i < 4; i++){
+		increaseDirty(i);
+	}
+}
+
+function increaseDirty(i){
+	dirtyness[i] = dirtyness[i] + DIRTY_AMOUNT;
+	$('#'+i).text(dirtyness[i]);
+	if(dirtyness[i] > 99){
+		rooms[i] = false;
+		$("#"+i).css("background-color", "red");
+	}
+}
+
 function automaticMode(){
 	console.log("loco");
+	// automaticDirty();
+
+
 	if(rooms[roomTheRobotIs] == false){
 		console.log("entrou if");
 		cleanRoom(roomTheRobotIs);
@@ -108,35 +199,11 @@ function automaticMode(){
 	}
 	else{
 		console.log("else");
-		switch(roomTheRobotIs){
-			case 0:
-				right();
-				setTimeout(
-					() => {automaticMode()},
-					2000
-				);
-				break;
-			case 1:
-				down();
-				setTimeout(
-					() => {automaticMode()},
-					2000
-				);
-				break;
-			case 2:
-				up();
-				setTimeout(
-					() => {automaticMode()},
-					2000
-				);
-				break;
-			case 3:
-				left();
-				setTimeout(
-					() => {automaticMode()},
-					2000
-				);
-				break;
-		}
+		// goToNextRoom();
+		decideRoom();
+		setTimeout(
+				() => {automaticMode()},
+				2000
+		);
 	}
 }
