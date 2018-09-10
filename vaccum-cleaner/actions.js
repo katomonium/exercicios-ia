@@ -54,7 +54,7 @@ function right() {
 	if(roomTheRobotIs == 2){
 		roomTheRobotIs = 3;
 	}
-	cleanRoom(roomTheRobotIs);
+// 	cleanRoom(roomTheRobotIs);
 	$('#r1').animate({left: '250px'});
 }
 
@@ -66,7 +66,7 @@ function left() {
 	if(roomTheRobotIs == 3){
 		roomTheRobotIs = 2;
 	}
-	cleanRoom(roomTheRobotIs);
+// 	cleanRoom(roomTheRobotIs);
 	$('#r1').animate({left: '0px'});
 }
 
@@ -77,7 +77,7 @@ function down() {
 	if(roomTheRobotIs == 1){
 		roomTheRobotIs = 3;
 	}
-	cleanRoom(roomTheRobotIs);
+// 	cleanRoom(roomTheRobotIs);
 	$('#r1').animate({top: '250px'});
 }
 
@@ -88,7 +88,7 @@ function up() {
 	if(roomTheRobotIs == 3){
 		roomTheRobotIs = 1;
 	}
-	cleanRoom(roomTheRobotIs);
+// 	cleanRoom(roomTheRobotIs);
 	$('#r1').animate({top: '0px'});
 }
 
