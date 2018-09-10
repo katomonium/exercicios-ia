@@ -161,7 +161,7 @@ function getPreviousRoom(){
 }
 
 function decideRoom(){
-	if(dirtyness[roomTheRobotIs] >= dirtyness[getNextRoom()] && dirtyness[roomTheRobotIs] >= dirtyness[getPreviousRoom()]){
+	if(dirtyness[roomTheRobotIs] > dirtyness[getNextRoom()] && dirtyness[roomTheRobotIs] > dirtyness[getPreviousRoom()]){
 		cleanRoom(roomTheRobotIs);
 		return;
 	}
