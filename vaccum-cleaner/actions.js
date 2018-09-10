@@ -55,7 +55,7 @@ function right() {
 		roomTheRobotIs = 3;
 	}
 // 	cleanRoom(roomTheRobotIs);
-	$('#r1').animate({left: '250px'});
+	$('#r1').animate({left: '250px'}, 2000);
 }
 
 
@@ -67,7 +67,7 @@ function left() {
 		roomTheRobotIs = 2;
 	}
 // 	cleanRoom(roomTheRobotIs);
-	$('#r1').animate({left: '0px'});
+	$('#r1').animate({left: '0px'}, 2000);
 }
 
 function down() {
@@ -78,7 +78,7 @@ function down() {
 		roomTheRobotIs = 3;
 	}
 // 	cleanRoom(roomTheRobotIs);
-	$('#r1').animate({top: '250px'});
+	$('#r1').animate({top: '250px'}, 2000);
 }
 
 function up() {
@@ -89,7 +89,7 @@ function up() {
 		roomTheRobotIs = 1;
 	}
 // 	cleanRoom(roomTheRobotIs);
-	$('#r1').animate({top: '0px'});
+	$('#r1').animate({top: '0px'}, 2000);
 }
 
 function goToNextRoom(){
