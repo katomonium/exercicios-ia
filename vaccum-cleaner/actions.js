@@ -31,7 +31,7 @@ $(document).ready(function() {
 });
 
 function cleanRoom(roomId){
-	if(rooms[roomId] == false){
+	if(dirtyness[roomId] > 0){
 		dirtyness[roomTheRobotIs] = 0;
 		$('#action').text("Cleaning...")
 		setTimeout(
@@ -161,6 +161,10 @@ function getPreviousRoom(){
 }
 
 function decideRoom(){
+	if(dirtyness[roomTheRobotIs] >= dirtyness[getNextRoom()] && dirtyness[roomTheRobotIs] >= dirtyness[getPreviousRoom()]){
+		cleanRoom(roomTheRobotIs);
+		return;
+	}
 	if(dirtyness[getNextRoom()] > dirtyness[getPreviousRoom()]){
 		goToNextRoom();
 	}
