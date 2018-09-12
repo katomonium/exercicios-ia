@@ -1,26 +1,27 @@
 <!DOCTYPE html>
-<html style="margin: 0; padding: 0">
+<html>
 <head>
 	<meta charset="utf-8" />
 	<title>2D Vaccum Cleaner</title>
+	<link rel="stylesheet" href="./index.css" />
 </head>
-<body style="text-align: center; padding: 0; margin: 0">
-	<header style="background-color: aliceblue; padding:0;margin:0">
+<body>
+	<header>
 		<h1>2D Vaccum Cleaner</h1>
 		<div id="btns">
 			<button id="LEFT">Left</button>
 			<button id="DOWN">Down</button>
 			<button id="UP">Up</button>
 			<button id="RIGHT">Right</button>
-			<!-- <button id="SUCK">Suck</button> -->
+
+			<button id="MODE">Greed Mode</button>
 		</div>
-	</header>	
+	</header>
 	<main>
 		<div id="world">
 			<div id="r1" class="robot">
 				<div style="height: 0px;">
 					<p id="action" style="font-size: 16px; word-wrap: break-word;">
-						
 					</p>
 				</div>
 			</div>
@@ -33,38 +34,7 @@
 		</div>
 	</main>
 
-	<style>
-		.room {
-			width: 98px;
-			height: 20px;
-			position: relative;
-			border: 1px solid black;
-		}
-
-		#world {
-			/* position: absolute; */
-			/* background-color: black; */
-			margin: auto;
-			width: 350px;
-			/* background-color: aqua; */
-		}
-
-		.robot {
-			width: 100px;
-			height: 84px;
-			background: green;
-			position: relative;
-			animation-duration: 2s;
-			animation-fill-mode: both;
-		}
-		#rooms{
-			margin: auto;
-			text-align: center;
-			/* background-color: green;
-			width: 200px;
-			height: 200px; */
-		}
-	</style>
+	<!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
 	<script
 		src="https://code.jquery.com/jquery-3.3.1.min.js"
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="

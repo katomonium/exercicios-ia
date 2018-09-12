@@ -1,8 +1,9 @@
 var roomTheRobotIs = 0;
 var dirtyness = [0, 0, 0, 0];
-let DIRTY_AMOUNT = 15
+var DIRTY_AMOUNT = 15;
+var greedMode = true;
 
-$(document).ready(function() {	
+$(document).ready(function() {
 
 	$('#RIGHT').click(function() {
 		right();
@@ -20,9 +21,22 @@ $(document).ready(function() {
 		up();
 	});
 
+	$('#MODE').click(function() {
+		if(greedMode) {
+			greedMode = false;
+			$(this).text('Cycle Mode');
+			$("#r1").css("background-color", "#6464b6");
+		} else {
+			greedMode = true;
+			$(this).text('Greed Mode');
+			$("#r1").css("background-color", "#64b664");
+		}
+	});
+
 	$('.room').click(function() {
 		increaseDirty(this.id);
 	});
+
 	automaticMode();
 
 });
@@ -34,10 +48,9 @@ function cleanRoom(roomId){
 		setTimeout(
 			() => {
 				$('#action').text("")
-				$("#"+roomId).css("background-color", "white");
+				$("#"+roomId).css("background-color", "#3b444c");
 				$("#"+roomId).text(dirtyness[roomId]);
-
-			}, 
+			},
 			2000
 		);
 	}
@@ -50,7 +63,7 @@ function right() {
 	if(roomTheRobotIs == 2){
 		roomTheRobotIs = 3;
 	}
-// 	cleanRoom(roomTheRobotIs);
+
 	$('#r1').animate({left: '250px'}, 2000);
 }
 
@@ -62,7 +75,7 @@ function left() {
 	if(roomTheRobotIs == 3){
 		roomTheRobotIs = 2;
 	}
-// 	cleanRoom(roomTheRobotIs);
+
 	$('#r1').animate({left: '0px'}, 2000);
 }
 
@@ -73,7 +86,7 @@ function down() {
 	if(roomTheRobotIs == 1){
 		roomTheRobotIs = 3;
 	}
-// 	cleanRoom(roomTheRobotIs);
+
 	$('#r1').animate({top: '250px'}, 2000);
 }
 
@@ -84,7 +97,7 @@ function up() {
 	if(roomTheRobotIs == 3){
 		roomTheRobotIs = 1;
 	}
-// 	cleanRoom(roomTheRobotIs);
+
 	$('#r1').animate({top: '0px'}, 2000);
 }
 
@@ -180,24 +193,26 @@ function increaseDirty(i){
 	$('#'+i).text(dirtyness[i]);
 	if(dirtyness[i] > 99){
 		rooms[i] = false;
-		$("#"+i).css("background-color", "red");
 	}
 }
 
 function automaticMode(){
 	if(dirtyness[roomTheRobotIs] > 0){
-		console.log("entrou if");
 		cleanRoom(roomTheRobotIs);
 		setTimeout(
 			() => {automaticMode()},
-			2000
+			3000
 		);
 	}
 	else{
-		decideRoom();
+		if(greedMode) {
+			decideRoom();
+		} else {
+			goToPreviousRoom();
+		}
 		setTimeout(
-				() => {automaticMode()},
-				2000
+			() => {automaticMode()},
+			3000
 		);
 	}
 }

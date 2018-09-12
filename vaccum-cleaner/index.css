@@ -1,0 +1,49 @@
+body {
+	text-align: center;
+	margin: 0px;
+	background-color: lightgray;
+}
+
+header {
+	background-color: #c0c6cc;
+	padding: 20px;
+}
+
+button {
+	background-color: #3b444c;
+	color: #bbc3cc;
+	padding: 4px 8px;
+}
+
+.room {
+	width: 98px;
+	height: 20px;
+	position: relative;
+	border: 1px solid black;
+	background-color: #3b444c;
+	color: #bbc3cc;
+}
+
+#world {
+	margin: auto;
+	width: 350px;
+}
+
+.robot {
+	width: 100px;
+	height: 84px;
+	background: #64b664;
+	position: relative;
+	animation-duration: 2s;
+	animation-fill-mode: both;
+}
+
+#action {
+	position: relative;
+	top: 10px;
+}
+
+#rooms{
+	margin: auto;
+	text-align: center;
+}
