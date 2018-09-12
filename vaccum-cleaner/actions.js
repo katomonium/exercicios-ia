@@ -214,22 +214,24 @@ function increaseDirty(i){
 }
 
 function automaticMode(){
-	if(dirtyness[roomTheRobotIs] > 0){
-		cleanRoom(roomTheRobotIs);
-		setTimeout(
-			() => {automaticMode()},
-			3000
-		);
-	}
-	else{
-		if(greedMode) {
-			decideRoom();
-		} else {
-			goToPreviousRoom();
+	if(auto) {
+		if(dirtyness[roomTheRobotIs] > 0){
+			cleanRoom(roomTheRobotIs);
+			setTimeout(
+				() => {automaticMode()},
+				3000
+			);
 		}
-		setTimeout(
-			() => {automaticMode()},
-			3000
-		);
+		else{
+			if(greedMode) {
+				decideRoom();
+			} else {
+				goToPreviousRoom();
+			}
+			setTimeout(
+				() => {automaticMode()},
+				3000
+			);
+		}
 	}
 }
