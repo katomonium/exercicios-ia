@@ -1,5 +1,4 @@
 var roomTheRobotIs = 0;
-var rooms = [true, true, true, true];
 var dirtyness = [0, 0, 0, 0];
 let DIRTY_AMOUNT = 15
 
@@ -22,8 +21,6 @@ $(document).ready(function() {
 	});
 
 	$('.room').click(function() {
-		// alert(this.id);
-		rooms[this.id] = false;
 		increaseDirty(this.id);
 	});
 	automaticMode();
@@ -39,7 +36,6 @@ function cleanRoom(roomId){
 				$('#action').text("")
 				$("#"+roomId).css("background-color", "white");
 				$("#"+roomId).text(dirtyness[roomId]);
-				rooms[roomId] = true;
 
 			}, 
 			2000
@@ -189,11 +185,7 @@ function increaseDirty(i){
 }
 
 function automaticMode(){
-	console.log("loco");
-	// automaticDirty();
-
-
-	if(rooms[roomTheRobotIs] == false){
+	if(dirtyness[roomTheRobotIs] > 0){
 		console.log("entrou if");
 		cleanRoom(roomTheRobotIs);
 		setTimeout(
@@ -202,8 +194,6 @@ function automaticMode(){
 		);
 	}
 	else{
-		console.log("else");
-		// goToNextRoom();
 		decideRoom();
 		setTimeout(
 				() => {automaticMode()},
