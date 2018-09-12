@@ -2,6 +2,7 @@ var roomTheRobotIs = 0;
 var dirtyness = [0, 0, 0, 0];
 var DIRTY_AMOUNT = 15;
 var greedMode = true;
+var auto = true;
 
 $(document).ready(function() {
 
@@ -20,16 +21,32 @@ $(document).ready(function() {
 	$('#UP').click(function() {
 		up();
 	});
+	
+	$('#SUCK').click(function() {
+		cleanRoom(roomTheRobotIs);
+	});
+	
+	$('#AUTO').click(function() {
+		if(auto) {
+			auto = false;
+			$(this).text('Auto Off');
+		} else {
+			auto = true;
+			$(this).text('Auto On');
+		}
+	});
 
 	$('#MODE').click(function() {
-		if(greedMode) {
-			greedMode = false;
-			$(this).text('Cycle Mode');
-			$("#r1").css("background-color", "#6464b6");
-		} else {
-			greedMode = true;
-			$(this).text('Greed Mode');
-			$("#r1").css("background-color", "#64b664");
+		if(auto) {
+			if(greedMode) {
+				greedMode = false;
+				$(this).text('Cycle Mode');
+				$("#r1").css("background-color", "#6464b6");
+			} else {
+				greedMode = true;
+				$(this).text('Greed Mode');
+				$("#r1").css("background-color", "#64b664");
+			}
 		}
 	});
 
