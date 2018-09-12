@@ -233,5 +233,10 @@ function automaticMode(){
 				3000
 			);
 		}
+	} else {
+		setTimeout(
+			() => { automaticMode() },
+			2000
+		);
 	}
 }
