@@ -26,7 +26,7 @@ const inspect_table = () => {
 let PLAYER = true;
 
 $(document).ready(function() {
-	console.log('document ready :3');
+	console.log('document ready :3 eu moido');
 
 	render_table();
 	start();
@@ -51,6 +51,18 @@ $(document).ready(function() {
 			const txt = PLAYER ? 'Human' : 'Gary';
 			$('#actual').text(txt);
 		}
+	});
+	// console.log("manow");
+	$.ajax({
+		type: "POST",
+		url: "http://127.0.0.1:5000/teste",
+		data: { text: "oiee"},
+		dataType: "json",
+		contentType: "application/json",
+		})
+	.done(function( o ) {
+		console.log("oie")
+		console.log(o.text);
 	});
 
 });
