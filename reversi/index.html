@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Reversi</title>
+
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+	<header>
+		<h1>Reversi</h1>
+		<div id="btns">
+			<button id="RESET">Reset</button>
+		</div>
+	</header>
+
+	<main class="w3-container">
+		<h2>Player: <span id="actual">Human</span></h2>
+		<div class="w3-display-container w3-margin-top">
+			<div id="world" class="w3-display-topmiddle"></div>
+		</div>
+	</main>
+
+	<script
+		src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+	<script src="actions.js"></script>
+</body>
+</html>

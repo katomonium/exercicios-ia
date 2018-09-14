@@ -1,0 +1,37 @@
+body {
+	text-align: center;
+	margin: 0px;
+	background-color: lightgray;
+}
+
+header {
+	background-color: #c0c6cc;
+	padding: 20px;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table, td {
+	border: 1px solid black;
+}
+
+td {
+	width: 40px;
+	height: 40px;
+	padding: 5px;
+	background-color: #ccc0c6;
+}
+
+#world {
+	
+}
+
+.cell {
+	width: 30px;
+	height: 30px;
+	padding: 5px;
+
+	border-radius: 100%;
+}
