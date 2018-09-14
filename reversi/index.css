@@ -24,8 +24,12 @@ td {
 	background-color: #ccc0c6;
 }
 
+.playable td:hover {
+	background-color: #6e726b;
+}
+
 #world {
-	
+
 }
 
 .cell {

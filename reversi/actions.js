@@ -6,6 +6,23 @@ for(var i = 0; i < 8; i++) {
 	}
 }
 
+const inspect_table = () => {
+	let s = '    0 1 2 3 4 5 6 7';
+	console.log(s);
+
+	for(var i = 0; i < 8; i++) {
+		let s = '[ ';
+		for(var j = 0; j < 8; j++) {
+			if(TABLE[i][j] === '')
+				s += '· '
+			else
+				s += `${TABLE[i][j]} `;
+		}
+		s += ']'
+		console.log(`${i} ${s}`)
+	}
+}
+
 let PLAYER = true;
 
 $(document).ready(function() {
@@ -25,13 +42,11 @@ $(document).ready(function() {
 		console.log(`cell_${i}_${j}: ${TABLE[i][j]} - ${PLAYER}`);
 
 		if(TABLE[i][j] === '') {
-			draw_circle(i, j, PLAYER);
+			draw_circle(i, j, PLAYER ? 'black' : 'white');
 
 			TABLE[i][j] = PLAYER ? 1 : 0;
+			inspect_table();
 
-			for(var x = 0; x < 8; x++) {
-				console.log(TABLE[x]);
-			}
 			PLAYER = !PLAYER;
 			const txt = PLAYER ? 'Human' : 'Gary';
 			$('#actual').text(txt);
@@ -44,6 +59,7 @@ const start = () => {
 	for(var i = 0; i < 8; i++) {
 		for(var j = 0; j< 8; j++) {
 			TABLE[i][j] = '';
+			draw_circle(i, j, '')
 		}
 	}
 
@@ -52,10 +68,10 @@ const start = () => {
 	TABLE[3][4] = 1;
 	TABLE[4][3] = 1;
 
-	draw_circle(3, 3, false);
-	draw_circle(4, 4, false);
-	draw_circle(3, 4, true);
-	draw_circle(4, 3, true);
+	draw_circle(3, 3, 'black');
+	draw_circle(4, 4, 'black');
+	draw_circle(3, 4, 'white');
+	draw_circle(4, 3, 'white');
 }
 
 const render_table = () => {
@@ -65,15 +81,12 @@ const render_table = () => {
 	for(let i = 0; i < 8; i++) {
 		$('#table').append(`<tr id="row${i}"></tr>`);
 		for(let j = 0; j < 8; j++) {
-			$('#row' + i).append(`<td><div id="cell_${i}_${j}" class="cell"></div></td>`);
+			const div = `<div id="cell_${i}_${j}" class="cell"></div>`
+			$('#row' + i).append(`<td>${div}</td>`);
 		}
 	}
 }
 
-const draw_circle = (i, j, p) => {
-	if(p) {
-		$(`#cell_${i}_${j}`).css('background-color', 'black');
-	} else {
-		$(`#cell_${i}_${j}`).css('background-color', 'white');
-	}
+const draw_circle = (i, j, color) => {
+	$(`#cell_${i}_${j}`).css('background-color', color);
 }
