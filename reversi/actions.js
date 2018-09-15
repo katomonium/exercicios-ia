@@ -23,8 +23,6 @@ const inspect_table = () => {
 	console.log(s);
 }
 
-let PLAYER = true;
-
 $(document).ready(function() {
 	console.log('document ready :3');
 
@@ -39,39 +37,71 @@ $(document).ready(function() {
 		const id = e.target.id.split('_');
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
-		console.log(`cell_${i}_${j}: ${TABLE[i][j]} - ${PLAYER}`);
 
 		if(TABLE[i][j] === '') {
-			draw_circle(i, j, PLAYER ? 'black' : 'white');
+			$.ajax({
+				type: 'POST',
+				url: '/add',
+				data: JSON.stringify({ cell: `${i} ${j}` }),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: (data) => {
+					draw_many(data.player, true);
+					$('#actual').text('Gary');
 
-			TABLE[i][j] = PLAYER ? 1 : 0;
-			inspect_table();
-
-			PLAYER = !PLAYER;
-			const txt = PLAYER ? 'Human' : 'Gary';
-			$('#actual').text(txt);
+					setTimeout(() => {
+						draw_many(data.ai, false);
+					$('#actual').text('Human');
+					}, 2000);
+				},
+				failure: (data) => alert(data)
+			});
 		}
 	});
 
 });
 
-const start = () => {
-	for(var i = 0; i < 8; i++) {
-		for(var j = 0; j< 8; j++) {
-			TABLE[i][j] = '';
-			draw_circle(i, j, '')
-		}
+const draw_many = (arr, player) => {
+	console.log(arr, arr.length);
+	for(let i = 0; i < arr.length; i++) {
+		const x = arr[i][0];
+		const y = arr[i][2];
+
+		console.log(x, y);
+		TABLE[x][y] = player ? 1 : 0;
+		draw_circle(x, y, player ? 'black' : 'white');
 	}
 
-	TABLE[3][3] = 0;
-	TABLE[4][4] = 0;
-	TABLE[3][4] = 1;
-	TABLE[4][3] = 1;
+	inspect_table();
+}
 
-	draw_circle(3, 3, 'black');
-	draw_circle(4, 4, 'black');
-	draw_circle(3, 4, 'white');
-	draw_circle(4, 3, 'white');
+const start = () => {
+	$.ajax({
+		type: 'POST',
+		url: '/add',
+		data: JSON.stringify({ cmd: 'start' }),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: (data) => {
+			for(var i = 0; i < 8; i++) {
+				for(var j = 0; j< 8; j++) {
+					TABLE[i][j] = '';
+					draw_circle(i, j, '')
+				}
+			}
+
+			TABLE[3][3] = 0;
+			TABLE[4][4] = 0;
+			TABLE[3][4] = 1;
+			TABLE[4][3] = 1;
+
+			draw_circle(3, 3, 'black');
+			draw_circle(4, 4, 'black');
+			draw_circle(3, 4, 'white');
+			draw_circle(4, 3, 'white');
+		},
+		failure: (data) => alert(data)
+	});
 }
 
 const render_table = () => {
