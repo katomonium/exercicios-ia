@@ -6,6 +6,8 @@ for(var i = 0; i < 8; i++) {
 	}
 }
 
+PLAYER = true;
+
 const inspect_table = () => {
 	let s = '    0 1 2 3 4 5 6 7\n';
 
@@ -34,6 +36,10 @@ $(document).ready(function() {
 	});
 
 	$('.cell').click((e) => {
+		if(!PLAYER)
+			return;
+
+		PLAYER = false;
 		const id = e.target.id.split('_');
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
@@ -41,8 +47,8 @@ $(document).ready(function() {
 		if(TABLE[i][j] === '') {
 			$.ajax({
 				type: 'POST',
-				url: '/add',
-				data: JSON.stringify({ cell: `${i} ${j}` }),
+				url: '/play',
+				data: JSON.stringify({ cmd: '', cell: `${i} ${j}` }),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				success: (data) => {
@@ -53,6 +59,8 @@ $(document).ready(function() {
 						draw_many(data.ai, false);
 					$('#actual').text('Human');
 					}, 2000);
+
+					PLAYER = true;
 				},
 				failure: (data) => alert(data)
 			});
@@ -76,29 +84,34 @@ const draw_many = (arr, player) => {
 }
 
 const start = () => {
+	for(var i = 0; i < 8; i++) {
+		for(var j = 0; j< 8; j++) {
+			TABLE[i][j] = '';
+		}
+	}
+
+	TABLE[3][3] = 1;
+	TABLE[4][4] = 1;
+	TABLE[3][4] = 0;
+	TABLE[4][3] = 0;
+
 	$.ajax({
 		type: 'POST',
-		url: '/add',
-		data: JSON.stringify({ cmd: 'start' }),
+		url: '/start',
+		data: JSON.stringify({ table: TABLE }),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: (data) => {
 			for(var i = 0; i < 8; i++) {
 				for(var j = 0; j< 8; j++) {
-					TABLE[i][j] = '';
 					draw_circle(i, j, '')
 				}
 			}
 
-			TABLE[3][3] = 0;
-			TABLE[4][4] = 0;
-			TABLE[3][4] = 1;
-			TABLE[4][3] = 1;
-
-			draw_circle(3, 3, 'black');
-			draw_circle(4, 4, 'black');
-			draw_circle(3, 4, 'white');
-			draw_circle(4, 3, 'white');
+			draw_circle(3, 3, 'white');
+			draw_circle(4, 4, 'white');
+			draw_circle(3, 4, 'black');
+			draw_circle(4, 3, 'black');
 		},
 		failure: (data) => alert(data)
 	});
