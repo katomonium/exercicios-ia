@@ -40,18 +40,51 @@ class reversi:
 
         self.pecas['B'] = [(3, 3), (4, 4)]
         self.pecas['P'] = [(4, 3), (3, 4)]
-        self.imprimeTabela()
+        self.imprimeTabuleiro()
 
-        self.calculaPossiveisJogadas("P")
+        self.atualizaPossiveisJogadas()
 
-        self.fazerMovimento('P', (2,3))
+        
+        self.modoPvP()
+
+
+    def modoPvP(self, ):
+        jogadorAtual = 'P'
+        acabou = False
+        while not acabou:
+            self.imprimeTabuleiro()
+            acabou = self.lerJogada(jogadorAtual)
+            jogadorAtual = self.inimigo[jogadorAtual]
+
+    # le a jogada, retorna TRUE se o jogo tiver acabado
+    def lerJogada(self, jogadorAtual):
+        print('Jogador atual: ' + jogadorAtual)
+        print(self.possiveisJogadas[jogadorAtual])
+        if(len(self.possiveisJogadas[jogadorAtual]) == 0):
+            if(len(self.possiveisJogadas[self.inimigo[jogadorAtual]]) == 0):
+                return True
+            return False
+        i = int(input('Entre com a linha:'))
+        j = int(input('Entre com a coluna:'))
+        jogada = (i,j)
+        if(jogada in self.possiveisJogadas[jogadorAtual]):
+            print('Jogada valida')
+            self.fazerMovimento(jogadorAtual, jogada)
+            return False
+        else:
+            print('Jogada invalida')
+            self.lerJogada(jogadorAtual)
+        
+
+
+        # self.fazerMovimento('P', (2,3))
         # print(self.pecas['P'])
 
-        self.fazerMovimento('B', (2,2))
-        self.imprimeTabela()
+        # self.fazerMovimento('B', (2,2))
+        # self.imprimeTabuleiro()
 
-        self.fazerMovimento('P', (3,2))
-        self.imprimeTabela()
+        # self.fazerMovimento('P', (3,2))
+        # self.imprimeTabuleiro()
         # return jsonify({ 'code': 200 })
 
     # @app.route('/play', methods = ['POST'])
@@ -93,171 +126,279 @@ class reversi:
 
         vetorPecas = self.pecas[jogadorAtual]
 
-        # print(vetorPecas)
+        # # print(vetorPecas)
         jogadoInimigo = "B"
         if(jogadorAtual == "B"):
             jogadoInimigo = "P"
+        
+        self.possiveisJogadas[jogadorAtual] = {}
 
-        possiveisJogadas = {}
         for peca in vetorPecas:
-            print(peca)
+            # print(peca)
             i = peca[0]
             j = peca[1]
 
-            # arriba
+            ############################## arriba ######################################
             iAux = i-1
-            falhou = False
+            acabou = False
 
             pecasQueSeraoViradas = []
-            print("testando pra cima")
-            while(iAux >= 0 and not falhou):
-                print("testando posicao: ({}, {})".format(iAux, j))
-                if(self.tabuleiro[iAux][j] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((iAux, j))
-                else:
-                    falhou = True
+            # print("testando pra cima")
+            if(self.tabuleiro[iAux][j] == jogadoInimigo):
+                pecasQueSeraoViradas.append((iAux, j))
                 iAux -= 1
+                while(iAux >= 0 and not acabou):
+                    # print("testando posicao: ({}, {})".format(iAux, j))
+                    if(self.tabuleiro[iAux][j] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((iAux, j))
+                    elif(self.tabuleiro[iAux][j] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
+                    iAux -= 1
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(iAux+1, j)] = pecasQueSeraoViradas
+            if len(pecasQueSeraoViradas) and acabou:
+                if (iAux+1, j) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(iAux+1, j)]):
+                            self.possiveisJogadas[jogadorAtual][(iAux+1, j)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(iAux+1, j)] = pecasQueSeraoViradas
 
-            # abajo
+            ############################## abajo ######################################
             iAux = i+1
-            falhou = False
+            acabou = False
             pecasQueSeraoViradas = []
-            print("testando pra baixo")
-            while(iAux < 8 and not falhou):
-                print("testando posicao: ({}, {})".format(iAux, j))
-                if(self.tabuleiro[iAux][j] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((iAux, j))
-                else:
-                    falhou = True
+            # print("testando pra baixo")
+            if(self.tabuleiro[iAux][j] == jogadoInimigo):
+                pecasQueSeraoViradas.append((iAux, j))
                 iAux += 1
+                while(iAux < 8 and not acabou):
+                    # print("testando posicao: ({}, {})".format(iAux, j))
+                    if(self.tabuleiro[iAux][j] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((iAux, j))
+                    elif(self.tabuleiro[iAux][j] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(iAux-1, j)] = pecasQueSeraoViradas
+                    iAux += 1
 
-            # esquerdja
+            if len(pecasQueSeraoViradas) and acabou:
+                if (iAux-1, j) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(iAux-1, j)]):
+                            self.possiveisJogadas[jogadorAtual][(iAux-1, j)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(iAux-1, j)] = pecasQueSeraoViradas
+
+                
+
+            ############################## esquerda ######################################
             jAux = j-1
-            falhou = False
+            acabou = False
             pecasQueSeraoViradas = []
-            print("testando pra esquerda")
-            while(jAux >= 0 and not falhou):
-                print("testando posicao: ({}, {})".format(i, jAux))
-                if(self.tabuleiro[i][jAux] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((i, jAux))
-                else:
-                    falhou = True
+            # print("testando pra esquerda")
+            
+            if(self.tabuleiro[i][jAux] == jogadoInimigo):
+                pecasQueSeraoViradas.append((i, jAux))
                 jAux -= 1
+                while(jAux >= 0 and not acabou):
+                    # print("testando posicao: ({}, {})".format(i, jAux))
+                    if(self.tabuleiro[i][jAux] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((i, jAux))
+                    elif(self.tabuleiro[i][jAux] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
+                    jAux -= 1
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(i, jAux+1)] = pecasQueSeraoViradas
-
-            # deretcha
-            jAux = j+1
-            falhou = False
-            pecasQueSeraoViradas = []
-            print("testando pra direita")
-            while(jAux < 8 and not falhou):
-                print("testando posicao: ({}, {})".format(i, jAux))
-                if(self.tabuleiro[i][jAux] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((i, jAux))
+            if len(pecasQueSeraoViradas) and acabou:
+                if (i, jAux+1) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(i, jAux+1)]):
+                            self.possiveisJogadas[jogadorAtual][(i, jAux+1)].append(peca)
                 else:
-                    falhou = True
+                    self.possiveisJogadas[jogadorAtual][(i, jAux+1)] = pecasQueSeraoViradas
+
+
+            ############################## direita ######################################
+            jAux = j+1
+            acabou = False
+            pecasQueSeraoViradas = []
+            # print("testando pra direita")
+            if(self.tabuleiro[i][jAux] == jogadoInimigo):
+                pecasQueSeraoViradas.append((i, jAux))
                 jAux += 1
+                while(jAux < 8 and not acabou):
+                    # print("testando posicao: ({}, {})".format(i, jAux))
+                    if(self.tabuleiro[i][jAux] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((i, jAux))
+                    elif(self.tabuleiro[i][jAux] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(i, jAux-1)] = pecasQueSeraoViradas
+                    jAux += 1
 
-            # cima direita
+            if len(pecasQueSeraoViradas) and acabou:
+                if (i, jAux-1) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(i, jAux-1)]):
+                            self.possiveisJogadas[jogadorAtual][(i, jAux-1)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(i, jAux-1)] = pecasQueSeraoViradas
+
+
+            ############################## cima-direita ####################################
             iAux = i-1
             jAux = j+1
-            falhou = False
+            acabou = False
             pecasQueSeraoViradas = []
-            print("testando pra cima-direita")
-            while(jAux < 8 and iAux >= 0 and not falhou):
-                print("testando posicao: ({}, {})".format(iAux, jAux))
-                if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((iAux, jAux))
-                else:
-                    falhou = True
+            # print("testando pra cima-direita")
+            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                pecasQueSeraoViradas.append((iAux, jAux))
                 jAux += 1
                 iAux -= 1
+                while(jAux < 8 and iAux >= 0 and not acabou):
+                    # print("testando posicao: ({}, {})".format(iAux, jAux))
+                    if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((iAux, jAux))
+                    elif(self.tabuleiro[iAux][jAux] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(iAux+1, jAux-1)] = pecasQueSeraoViradas
+                    jAux += 1
+                    iAux -= 1
+
+            if len(pecasQueSeraoViradas) and acabou:
+                if (iAux+1, jAux-1) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(iAux+1, jAux-1)]):
+                            self.possiveisJogadas[jogadorAtual][(iAux+1, jAux-1)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(iAux+1, jAux-1)] = pecasQueSeraoViradas
+
+                
 
 
-            # cima esquerda
+            ############################## cima-esquerda ######################################
             iAux = i-1
             jAux = j-1
-            falhou = False
+            acabou = False
             pecasQueSeraoViradas = []
-            print("testando pra cima-esquerda")
-            while(jAux >= 0 and iAux >= 0 and not falhou):
-                print("testando posicao: ({}, {})".format(iAux, jAux))
-                if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((iAux, jAux))
-                else:
-                    falhou = True
+            # print("testando pra cima-esquerda")
+            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                pecasQueSeraoViradas.append((iAux, jAux))
                 jAux -= 1
                 iAux -= 1
+                while(jAux >= 0 and iAux >= 0 and not acabou):
+                    # print("testando posicao: ({}, {})".format(iAux, jAux))
+                    if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((iAux, jAux))
+                    elif(self.tabuleiro[iAux][jAux] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(iAux+1, jAux+1)] = pecasQueSeraoViradas
+                    jAux -= 1
+                    iAux -= 1
 
-            # baixo direita
+            if len(pecasQueSeraoViradas) and acabou:
+                if (iAux+1, jAux+1) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(iAux+1, jAux+1)]):
+                            self.possiveisJogadas[jogadorAtual][(iAux+1, jAux+1)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(iAux+1, jAux+1)] = pecasQueSeraoViradas
+
+
+            ############################## baixo-direita ######################################
             iAux = i+1
             jAux = j+1
-            falhou = False
+            acabou = False
             pecasQueSeraoViradas = []
-            print("testando pra baixo-direita")
-            while(jAux < 8 and iAux < 8 and not falhou):
-                print("testando posicao: ({}, {})".format(iAux, jAux))
-                if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((iAux, jAux))
-                else:
-                    falhou = True
+            # print("testando pra baixo-direita")
+            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                pecasQueSeraoViradas.append((iAux, jAux))
                 jAux += 1
                 iAux += 1
+                while(jAux < 8 and iAux < 8 and not acabou):
+                    # print("testando posicao: ({}, {})".format(iAux, jAux))
+                    if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((iAux, jAux))
+                    elif(self.tabuleiro[iAux][jAux] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(iAux+1, jAux+1)] = pecasQueSeraoViradas
+                    jAux += 1
+                    iAux += 1
+
+            if len(pecasQueSeraoViradas) and acabou:
+                if (iAux-1, jAux-1) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:  
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(iAux-1, jAux-1)]):
+                            self.possiveisJogadas[jogadorAtual][(iAux-1, jAux-1)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(iAux-1, jAux-1)] = pecasQueSeraoViradas
 
 
-            # baixo esquerda
+            ############################## baixo-esquerda ######################################            
             iAux = i+1
             jAux = j-1
-            falhou = False
+            acabou = False
             pecasQueSeraoViradas = []
-            print("testando pra baixo-esquerda")
-            while(jAux >= 0 and iAux < 8 and not falhou):
-                print("testando posicao: ({}, {})".format(iAux, jAux))
-                if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
-                    print("achei")
-                    pecasQueSeraoViradas.append((iAux, jAux))
-                else:
-                    falhou = True
+            # print("testando pra baixo-esquerda")
+            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                pecasQueSeraoViradas.append((iAux, jAux))
                 jAux -= 1
                 iAux += 1
+                while(jAux >= 0 and iAux < 8 and not acabou):
+                    # print("testando posicao: ({}, {})".format(iAux, jAux))
+                    if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+                        # print("achei")
+                        pecasQueSeraoViradas.append((iAux, jAux))
+                    elif(self.tabuleiro[iAux][jAux] == jogadorAtual):
+                        acabou = True
+                        pecasQueSeraoViradas = []
+                    else:
+                        acabou = True
 
-            if len(pecasQueSeraoViradas):
-                self.possiveisJogadas[jogadorAtual][(iAux-1, jAux+1)] = pecasQueSeraoViradas
+                    jAux -= 1
+                    iAux += 1
+
+            if len(pecasQueSeraoViradas) and acabou:
+                if (iAux-1, jAux+1) in self.possiveisJogadas[jogadorAtual]:
+                    for peca in pecasQueSeraoViradas:
+                        if(peca not in self.possiveisJogadas[jogadorAtual][(iAux-1, jAux+1)]):
+                            self.possiveisJogadas[jogadorAtual][(iAux-1, jAux+1)].append(peca)
+                else:
+                    self.possiveisJogadas[jogadorAtual][(iAux-1, jAux+1)] = pecasQueSeraoViradas
 
 
-            print(possiveisJogadas)
-            print("-----------")
+
+            # print(possiveisJogadas)
+            # print("-----------")
 
 
 
-    def imprimeTabela(self):
+    def imprimeTabuleiro(self):
         s = '   '
         for i in range(8):
             s += "{} ".format(i)
