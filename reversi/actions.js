@@ -47,7 +47,7 @@ $(document).ready(function() {
 		if(TABLE[i][j] === '') {
 			$.ajax({
 				type: 'POST',
-				url: '/play',
+				url: 'http://127.0.0.1:5000/play',
 				data: JSON.stringify({ cmd: '', cell: `${i} ${j}` }),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
@@ -97,24 +97,28 @@ const start = () => {
 
 	$.ajax({
 		type: 'POST',
-		url: '/start',
+		url: 'http://127.0.0.1:5000/start',
 		data: JSON.stringify({ table: TABLE }),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: (data) => {
-			for(var i = 0; i < 8; i++) {
-				for(var j = 0; j< 8; j++) {
-					draw_circle(i, j, '')
-				}
-			}
-
-			draw_circle(3, 3, 'white');
-			draw_circle(4, 4, 'white');
-			draw_circle(3, 4, 'black');
-			draw_circle(4, 3, 'black');
+			atualizarTabuleiro(data['tabuleiro']);
+			console.log(data);
+			// draw_circle(3, 3, 'white');
+			// draw_circle(4, 4, 'white');
+			// draw_circle(3, 4, 'black');
+			// draw_circle(4, 3, 'black');
 		},
 		failure: (data) => alert(data)
 	});
+}
+
+function atualizarTabuleiro(tabuleiro){
+	for(var i = 0; i < tabuleiro.length; i++) {
+		for(var j = 0; j< tabuleiro[0].length; j++) {
+			draw_circle(i, j, tabuleiro[i][j])
+		}
+	}
 }
 
 const render_table = () => {
@@ -130,6 +134,16 @@ const render_table = () => {
 	}
 }
 
-const draw_circle = (i, j, color) => {
+const draw_circle = (i, j, cor) => {
+	var color;
+	if(cor == 'P'){
+		color = 'black';
+	}
+	else if(cor == 'B'){
+		color = 'white';
+	}
+	else{
+		color = '';
+	}
 	$(`#cell_${i}_${j}`).css('background-color', color);
 }

@@ -1,12 +1,17 @@
 # from flask import Flask, request, jsonify, send_from_directory
-import json
+# import json
 
 # app = Flask(__name__, static_url_path='', static_folder='')
-class reversi:
+import copy
+class Reversi:
 
 
     def __init__(self):
         self.tabuleiro = []
+        for i in range(8):
+            self.tabuleiro.append([])
+            for j in range(8):
+                self.tabuleiro[i].append('.')
 
         self.pecas = {}
         self.pecas['P'] = []
@@ -20,19 +25,6 @@ class reversi:
         self.inimigo['P'] = 'B'
         self.inimigo['B'] = 'P'
 
-
-    # @app.route('/')
-    def root(self):
-        return send_from_directory('', 'index.html')
-
-    # @app.route('/start', methods = ['POST'])
-    def start(self):
-        # data = json.loads(request.data)
-        # table = data['table']
-        for i in range(8):
-            self.tabuleiro.append([])
-            for j in range(8):
-                self.tabuleiro[i].append('.')
         self.tabuleiro[4][3] = "P"
         self.tabuleiro[3][4] = "P"
         self.tabuleiro[3][3] = "B"
@@ -40,6 +32,31 @@ class reversi:
 
         self.pecas['B'] = [(3, 3), (4, 4)]
         self.pecas['P'] = [(4, 3), (3, 4)]
+
+    def getTabuleiro(self):
+        return self.tabuleiro
+    
+    def getJogo(self):
+        jogo = {}
+        jogo['tabuleiro'] = self.tabuleiro
+        copiaPossiveisJogadas = copy.deepcopy(self.possiveisJogadas)
+
+        for j in copiaPossiveisJogadas:
+            for jogada in copiaPossiveisJogadas[j]:
+                jogada = list(jogada)
+        return jogo
+
+
+    # @app.route('/')
+    # def root(self):
+    #     return send_from_directory('', 'index.html')
+
+    # @app.route('/start', methods = ['POST'])
+    def start(self):
+        # data = json.loads(request.data)
+        # table = data['table']
+
+
         self.imprimeTabuleiro()
 
         self.atualizaPossiveisJogadas()
@@ -75,18 +92,6 @@ class reversi:
             print('Jogada invalida')
             self.lerJogada(jogadorAtual)
         
-
-
-        # self.fazerMovimento('P', (2,3))
-        # print(self.pecas['P'])
-
-        # self.fazerMovimento('B', (2,2))
-        # self.imprimeTabuleiro()
-
-        # self.fazerMovimento('P', (3,2))
-        # self.imprimeTabuleiro()
-        # return jsonify({ 'code': 200 })
-
     # @app.route('/play', methods = ['POST'])
     def jogar(self):
         data = json.loads(request.data)
@@ -393,11 +398,6 @@ class reversi:
 
 
 
-            # print(possiveisJogadas)
-            # print("-----------")
-
-
-
     def imprimeTabuleiro(self):
         s = '   '
         for i in range(8):
@@ -415,12 +415,4 @@ class reversi:
 
         print(s)
         print(self.pecas)
-
-
-def main():
-    r = reversi()
-    r.start()
-
-
-main()
-# app.run(debug=True)
+        return s
