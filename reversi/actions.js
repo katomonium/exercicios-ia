@@ -44,23 +44,17 @@ $(document).ready(function() {
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
 
+		console.log(`cell_${i}_${j}`);
 		if(TABLE[i][j] === '') {
 			$.ajax({
 				type: 'POST',
-				url: '/play',
-				data: JSON.stringify({ cmd: '', cell: `${i} ${j}` }),
+				url: 'http://localhost:5000/play',
+				data: JSON.stringify({ cell: `${i} ${j}` }),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				success: (data) => {
 					draw_many(data.player, true);
 					$('#actual').text('Gary');
-
-					setTimeout(() => {
-						draw_many(data.ai, false);
-					$('#actual').text('Human');
-					}, 2000);
-
-					PLAYER = true;
 				},
 				failure: (data) => alert(data)
 			});
@@ -71,9 +65,10 @@ $(document).ready(function() {
 
 const draw_many = (arr, player) => {
 	console.log(arr, arr.length);
+
 	for(let i = 0; i < arr.length; i++) {
 		const x = arr[i][0];
-		const y = arr[i][2];
+		const y = arr[i][1];
 
 		console.log(x, y);
 		TABLE[x][y] = player ? 1 : 0;
@@ -97,7 +92,7 @@ const start = () => {
 
 	$.ajax({
 		type: 'POST',
-		url: '/start',
+		url: 'http://localhost:5000/start',
 		data: JSON.stringify({ table: TABLE }),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
@@ -112,6 +107,8 @@ const start = () => {
 			draw_circle(4, 4, 'white');
 			draw_circle(3, 4, 'black');
 			draw_circle(4, 3, 'black');
+
+			console.log(data)
 		},
 		failure: (data) => alert(data)
 	});
