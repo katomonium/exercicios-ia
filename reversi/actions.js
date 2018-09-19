@@ -29,7 +29,7 @@ const inspect_table = () => {
 
 $(document).ready(function() {
 	console.log('document ready :3');
-
+	$('#actual').text('Brancas');
 	render_table();
 	start();
 
@@ -67,7 +67,9 @@ $(document).ready(function() {
 					// 	draw_many(data.ai, false);
 					// $('#actual').text('Human');
 					// }, 2000);
-					jogador = !jogador;
+					if(data['jogadaValida']){
+						mudarJogador();
+					}
 					READY = true;
 				},
 				failure: (data) => alert(data)
@@ -76,6 +78,17 @@ $(document).ready(function() {
 	});
 
 });
+
+function mudarJogador(){
+	jogador = !jogador;
+	if(jogador){
+		$('#actual').text('Brancas');
+	}
+	else{
+		$('#actual').text('Pretas');
+
+	}
+}
 
 // const draw_many = (arr, player) => {
 // 	console.log(arr, arr.length);

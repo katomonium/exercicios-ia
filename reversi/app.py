@@ -142,6 +142,7 @@ class Reversi:
                 self.pecas[jogadorAtual].append(p)
                 self.pecas[inimigo].remove(p)
             self.atualizaPossiveisJogadas()
+            return True
         else:
             return False
 
@@ -171,7 +172,7 @@ class Reversi:
 
             pecasQueSeraoViradas = []
             # print("testando pra cima")
-            if(self.tabuleiro[iAux][j] == jogadoInimigo):
+            if(iAux >= 0 and self.tabuleiro[iAux][j] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, j))
                 iAux -= 1
                 while(iAux >= 0 and not acabou):
@@ -199,7 +200,7 @@ class Reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra baixo")
-            if(self.tabuleiro[iAux][j] == jogadoInimigo):
+            if(iAux < 8 and self.tabuleiro[iAux][j] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, j))
                 iAux += 1
                 while(iAux < 8 and not acabou):
@@ -231,7 +232,7 @@ class Reversi:
             pecasQueSeraoViradas = []
             # print("testando pra esquerda")
             
-            if(self.tabuleiro[i][jAux] == jogadoInimigo):
+            if(jAux >= 0 and self.tabuleiro[i][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((i, jAux))
                 jAux -= 1
                 while(jAux >= 0 and not acabou):
@@ -260,7 +261,7 @@ class Reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra direita")
-            if(self.tabuleiro[i][jAux] == jogadoInimigo):
+            if(jAux < 8 and self.tabuleiro[i][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((i, jAux))
                 jAux += 1
                 while(jAux < 8 and not acabou):
@@ -291,7 +292,7 @@ class Reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra cima-direita")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux >= 0 and jAux < 8 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux += 1
                 iAux -= 1
@@ -326,7 +327,7 @@ class Reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra cima-esquerda")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux >= 0 and jAux >= 0 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux -= 1
                 iAux -= 1
@@ -359,7 +360,7 @@ class Reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra baixo-direita")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux < 8 and jAux < 8 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux += 1
                 iAux += 1
@@ -392,7 +393,7 @@ class Reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra baixo-esquerda")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux < 8 and jAux >= 0 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux -= 1
                 iAux += 1

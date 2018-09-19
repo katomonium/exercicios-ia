@@ -34,9 +34,10 @@ def jogar():
     if(data['jogador']):
         jogadorAtual = 'B'
 
-    reversi.fazerMovimento(jogadorAtual, (int(pos[0]), int(pos[1]) ))
-
-    return jsonify(reversi.getJogo())
+    jogadaValida = reversi.fazerMovimento(jogadorAtual, (int(pos[0]), int(pos[1]) ))
+    jogo = reversi.getJogo()
+    jogo['jogadaValida'] = jogadaValida
+    return jsonify(jogo)
 
 app.run(debug=True)
 
