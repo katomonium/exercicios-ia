@@ -8,7 +8,7 @@ for(var i = 0; i < 8; i++) {
 
 READY = true;
 var tabuleiro;
-var jogador = true;
+var jogador = false;
 
 const inspect_table = () => {
 	let s = '    0 1 2 3 4 5 6 7\n';
@@ -29,7 +29,7 @@ const inspect_table = () => {
 
 $(document).ready(function() {
 	console.log('document ready :3');
-	$('#actual').text('Brancas');
+	$('#actual').text('Pretas');
 	render_table();
 	start();
 
@@ -62,7 +62,13 @@ $(document).ready(function() {
 					if(data['jogadaValida']){
 						mudarJogador();
 					}
-					const j = jogador ? 'B' : 'P'
+					const j = jogador ? 'B' : 'P';
+					if(data['possiveisJogadas'][j].length === 0) {
+						alert('No moves');
+						mudarJogador();
+						READY = true;
+					}
+
 					marcarPossiveis(data['possiveisJogadas'][j]);
 					READY = true;
 				},
@@ -84,33 +90,20 @@ function mudarJogador(){
 	}
 }
 
-// const draw_many = (arr, player) => {
-// 	console.log(arr, arr.length);
-// 	for(let i = 0; i < arr.length; i++) {
-// 		const x = arr[i][0];
-// 		const y = arr[i][2];
-
-// 		console.log(x, y);
-// 		TABLE[x][y] = player ? 1 : 0;
-// 		draw_circle(x, y, player ? 'black' : 'white');
-// 	}
-
-// 	inspect_table();
-// }
-
 function start(){
 	$('.possivel').text('')
 	$('.possivel').removeClass('possivel');
+
 	for(var i = 0; i < 8; i++) {
 		for(var j = 0; j< 8; j++) {
 			TABLE[i][j] = '';
 		}
 	}
 
-	TABLE[3][3] = 1;
-	TABLE[4][4] = 1;
-	TABLE[3][4] = 0;
-	TABLE[4][3] = 0;
+	TABLE[3][3] = 0;
+	TABLE[4][4] = 0;
+	TABLE[3][4] = 1;
+	TABLE[4][3] = 1;
 
 	$.ajax({
 		type: 'POST',
@@ -120,7 +113,7 @@ function start(){
 		dataType: "json",
 		success: (data) => {
 			atualizarTabuleiro(data['tabuleiro']);
-			marcarPossiveis(data['possiveisJogadas']['B']);
+			marcarPossiveis(data['possiveisJogadas']['P']);
 			tabuleiro = data['tabuleiro'];
 		},
 		failure: (data) => alert(data)

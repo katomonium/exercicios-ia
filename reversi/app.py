@@ -18,13 +18,13 @@ class Reversi:
             self.pecas['P'] = []
             self.pecas['B'] = []
 
-            self.tabuleiro[4][3] = "P"
-            self.tabuleiro[3][4] = "P"
-            self.tabuleiro[3][3] = "B"
-            self.tabuleiro[4][4] = "B"
+            self.tabuleiro[4][3] = "B"
+            self.tabuleiro[3][4] = "B"
+            self.tabuleiro[3][3] = "P"
+            self.tabuleiro[4][4] = "P"
 
-            self.pecas['B'] = [(3, 3), (4, 4)]
-            self.pecas['P'] = [(4, 3), (3, 4)]
+            self.pecas['P'] = [(3, 3), (4, 4)]
+            self.pecas['B'] = [(4, 3), (3, 4)]
         else:
             self.tabuleiro = tab
 
@@ -50,11 +50,11 @@ class Reversi:
 
     def getTabuleiro(self):
         return self.tabuleiro
-    
+
     def getJogo(self):
         jogo = {}
         jogo['tabuleiro'] = self.tabuleiro
-        
+
         jogadas = {}
         for j in self.possiveisJogadas:
             jogadas[j] = {}
@@ -83,7 +83,7 @@ class Reversi:
 
         self.atualizaPossiveisJogadas()
 
-        
+
         self.modoPvP()
 
 
@@ -113,7 +113,7 @@ class Reversi:
         else:
             print('Jogada invalida')
             self.lerJogada(jogadorAtual)
-        
+
     # @app.route('/play', methods = ['POST'])
     # def jogar(self):
     #     data = json.loads(request.data)
@@ -158,7 +158,7 @@ class Reversi:
         jogadoInimigo = "B"
         if(jogadorAtual == "B"):
             jogadoInimigo = "P"
-        
+
         self.possiveisJogadas[jogadorAtual] = {}
 
         for peca in vetorPecas:
@@ -224,14 +224,14 @@ class Reversi:
                 else:
                     self.possiveisJogadas[jogadorAtual][(iAux-1, j)] = pecasQueSeraoViradas
 
-                
+
 
             ############################## esquerda ######################################
             jAux = j-1
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra esquerda")
-            
+
             if(jAux >= 0 and self.tabuleiro[i][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((i, jAux))
                 jAux -= 1
@@ -318,7 +318,7 @@ class Reversi:
                 else:
                     self.possiveisJogadas[jogadorAtual][(iAux+1, jAux-1)] = pecasQueSeraoViradas
 
-                
+
 
 
             ############################## cima-esquerda ######################################
@@ -380,14 +380,14 @@ class Reversi:
 
             if len(pecasQueSeraoViradas) and acabou:
                 if (iAux-1, jAux-1) in self.possiveisJogadas[jogadorAtual]:
-                    for peca in pecasQueSeraoViradas:  
+                    for peca in pecasQueSeraoViradas:
                         if(peca not in self.possiveisJogadas[jogadorAtual][(iAux-1, jAux-1)]):
                             self.possiveisJogadas[jogadorAtual][(iAux-1, jAux-1)].append(peca)
                 else:
                     self.possiveisJogadas[jogadorAtual][(iAux-1, jAux-1)] = pecasQueSeraoViradas
 
 
-            ############################## baixo-esquerda ######################################            
+            ############################## baixo-esquerda ######################################
             iAux = i+1
             jAux = j-1
             acabou = False
