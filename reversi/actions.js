@@ -47,9 +47,9 @@ $(document).ready(function() {
 		const j = parseInt(id[2]);
 
 		if(TABLE[i][j] === '') {
-			console.log('oi')
-			console.log(tabuleiro)
-			console.log('oi')
+			$('.possivel').text('')
+			$('.possivel').removeClass('possivel');
+
 			$.ajax({
 				type: 'POST',
 				url: 'http://127.0.0.1:5000/play',
@@ -58,18 +58,12 @@ $(document).ready(function() {
 				dataType: "json",
 				success: (data) => {
 					tabuleiro = data['tabuleiro']
-					console.log(data);
 					atualizarTabuleiro(tabuleiro);
-					// draw_many(data.player, true);
-					// $('#actual').text('Gary');
-
-					// setTimeout(() => {
-					// 	draw_many(data.ai, false);
-					// $('#actual').text('Human');
-					// }, 2000);
 					if(data['jogadaValida']){
 						mudarJogador();
 					}
+					const j = jogador ? 'B' : 'P'
+					marcarPossiveis(data['possiveisJogadas'][j]);
 					READY = true;
 				},
 				failure: (data) => alert(data)
@@ -105,6 +99,8 @@ function mudarJogador(){
 // }
 
 function start(){
+	$('.possivel').text('')
+	$('.possivel').removeClass('possivel');
 	for(var i = 0; i < 8; i++) {
 		for(var j = 0; j< 8; j++) {
 			TABLE[i][j] = '';
@@ -124,11 +120,24 @@ function start(){
 		dataType: "json",
 		success: (data) => {
 			atualizarTabuleiro(data['tabuleiro']);
-			console.log(data);
+			marcarPossiveis(data['possiveisJogadas']['B']);
 			tabuleiro = data['tabuleiro'];
 		},
 		failure: (data) => alert(data)
 	});
+}
+
+function marcarPossiveis(posicoes) {
+	keys = Object.keys(posicoes);
+
+	for(var k in keys) {
+		const i = parseInt(keys[k][0]);
+		const j = parseInt(keys[k][2]);
+
+		const id = `#cell_${i}_${j}`
+		$(id).addClass("possivel");
+		$(id).text(posicoes[keys[k]].length);
+	}
 }
 
 function atualizarTabuleiro(tabuleiro){
