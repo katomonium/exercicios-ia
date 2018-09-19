@@ -1,16 +1,42 @@
 # from flask import Flask, request, jsonify, send_from_directory
-import json
+# import json
 
 # app = Flask(__name__, static_url_path='', static_folder='')
-class reversi:
+import copy
+class Reversi:
 
 
-    def __init__(self):
-        self.tabuleiro = []
+    def __init__(self, tab = None):
+        if(tab == None):
+            self.tabuleiro = []
+            for i in range(8):
+                self.tabuleiro.append([])
+                for j in range(8):
+                    self.tabuleiro[i].append('.')
 
-        self.pecas = {}
-        self.pecas['P'] = []
-        self.pecas['B'] = []
+            self.pecas = {}
+            self.pecas['P'] = []
+            self.pecas['B'] = []
+
+            self.tabuleiro[4][3] = "P"
+            self.tabuleiro[3][4] = "P"
+            self.tabuleiro[3][3] = "B"
+            self.tabuleiro[4][4] = "B"
+
+            self.pecas['B'] = [(3, 3), (4, 4)]
+            self.pecas['P'] = [(4, 3), (3, 4)]
+        else:
+            self.tabuleiro = tab
+
+            self.pecas = {}
+            self.pecas['P'] = []
+            self.pecas['B'] = []
+            for i in range(len(self.tabuleiro)):
+                for j in range(len(self.tabuleiro[i])):
+                    if(self.tabuleiro[i][j] == 'P'):
+                        self.pecas['P'].append((i,j))
+                    if(self.tabuleiro[i][j] == 'B'):
+                        self.pecas['B'].append((i,j))
 
         self.possiveisJogadas = {}
         self.possiveisJogadas['P'] = {}
@@ -20,26 +46,39 @@ class reversi:
         self.inimigo['P'] = 'B'
         self.inimigo['B'] = 'P'
 
+        self.atualizaPossiveisJogadas()
+
+    def getTabuleiro(self):
+        return self.tabuleiro
+    
+    def getJogo(self):
+        jogo = {}
+        jogo['tabuleiro'] = self.tabuleiro
+        
+        jogadas = {}
+        for j in self.possiveisJogadas:
+            jogadas[j] = {}
+            for key in self.possiveisJogadas[j]:
+                stringChave = str(key[0]) + " " + str(key[1])
+                jogadas[j][stringChave] = []
+                for valor in self.possiveisJogadas[j][key]:
+                    stringValor = [valor[0], valor[1]]
+                    jogadas[j][stringChave].append(stringValor)
+        jogo['possiveisJogadas'] = jogadas
+
+        return jogo
+
 
     # @app.route('/')
-    def root(self):
-        return send_from_directory('', 'index.html')
+    # def root(self):
+    #     return send_from_directory('', 'index.html')
 
     # @app.route('/start', methods = ['POST'])
     def start(self):
         # data = json.loads(request.data)
         # table = data['table']
-        for i in range(8):
-            self.tabuleiro.append([])
-            for j in range(8):
-                self.tabuleiro[i].append('.')
-        self.tabuleiro[4][3] = "P"
-        self.tabuleiro[3][4] = "P"
-        self.tabuleiro[3][3] = "B"
-        self.tabuleiro[4][4] = "B"
 
-        self.pecas['B'] = [(3, 3), (4, 4)]
-        self.pecas['P'] = [(4, 3), (3, 4)]
+
         self.imprimeTabuleiro()
 
         self.atualizaPossiveisJogadas()
@@ -75,32 +114,20 @@ class reversi:
             print('Jogada invalida')
             self.lerJogada(jogadorAtual)
         
-
-
-        # self.fazerMovimento('P', (2,3))
-        # print(self.pecas['P'])
-
-        # self.fazerMovimento('B', (2,2))
-        # self.imprimeTabuleiro()
-
-        # self.fazerMovimento('P', (3,2))
-        # self.imprimeTabuleiro()
-        # return jsonify({ 'code': 200 })
-
     # @app.route('/play', methods = ['POST'])
-    def jogar(self):
-        data = json.loads(request.data)
-        if(data['cmd'] == 'start'):
-            # Star / Restart code here
-            print('starting...')
-            # return jsonify({'code': 200})
+    # def jogar(self):
+    #     data = json.loads(request.data)
+    #     if(data['cmd'] == 'start'):
+    #         # Star / Restart code here
+    #         print('starting...')
+    #         # return jsonify({'code': 200})
 
-        pos = data['cell'].split()
+    #     pos = data['cell'].split()
 
-        response = {
-            'player': [data['cell']],
-            'ai': moves.pop()
-        }
+    #     response = {
+    #         'player': [data['cell']],
+    #         'ai': moves.pop()
+    #     }
 
         # return jsonify(response)
 
@@ -115,6 +142,7 @@ class reversi:
                 self.pecas[jogadorAtual].append(p)
                 self.pecas[inimigo].remove(p)
             self.atualizaPossiveisJogadas()
+            return True
         else:
             return False
 
@@ -144,7 +172,7 @@ class reversi:
 
             pecasQueSeraoViradas = []
             # print("testando pra cima")
-            if(self.tabuleiro[iAux][j] == jogadoInimigo):
+            if(iAux >= 0 and self.tabuleiro[iAux][j] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, j))
                 iAux -= 1
                 while(iAux >= 0 and not acabou):
@@ -172,7 +200,7 @@ class reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra baixo")
-            if(self.tabuleiro[iAux][j] == jogadoInimigo):
+            if(iAux < 8 and self.tabuleiro[iAux][j] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, j))
                 iAux += 1
                 while(iAux < 8 and not acabou):
@@ -204,7 +232,7 @@ class reversi:
             pecasQueSeraoViradas = []
             # print("testando pra esquerda")
             
-            if(self.tabuleiro[i][jAux] == jogadoInimigo):
+            if(jAux >= 0 and self.tabuleiro[i][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((i, jAux))
                 jAux -= 1
                 while(jAux >= 0 and not acabou):
@@ -233,7 +261,7 @@ class reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra direita")
-            if(self.tabuleiro[i][jAux] == jogadoInimigo):
+            if(jAux < 8 and self.tabuleiro[i][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((i, jAux))
                 jAux += 1
                 while(jAux < 8 and not acabou):
@@ -264,7 +292,7 @@ class reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra cima-direita")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux >= 0 and jAux < 8 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux += 1
                 iAux -= 1
@@ -299,7 +327,7 @@ class reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra cima-esquerda")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux >= 0 and jAux >= 0 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux -= 1
                 iAux -= 1
@@ -332,7 +360,7 @@ class reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra baixo-direita")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux < 8 and jAux < 8 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux += 1
                 iAux += 1
@@ -365,7 +393,7 @@ class reversi:
             acabou = False
             pecasQueSeraoViradas = []
             # print("testando pra baixo-esquerda")
-            if(self.tabuleiro[iAux][jAux] == jogadoInimigo):
+            if(iAux < 8 and jAux >= 0 and self.tabuleiro[iAux][jAux] == jogadoInimigo):
                 pecasQueSeraoViradas.append((iAux, jAux))
                 jAux -= 1
                 iAux += 1
@@ -393,11 +421,6 @@ class reversi:
 
 
 
-            # print(possiveisJogadas)
-            # print("-----------")
-
-
-
     def imprimeTabuleiro(self):
         s = '   '
         for i in range(8):
@@ -415,12 +438,9 @@ class reversi:
 
         print(s)
         print(self.pecas)
+        return s
 
-
-def main():
-    r = reversi()
-    r.start()
-
-
-main()
-# app.run(debug=True)
+# def main():
+#     r = Reversi()
+#     print(r.getJogo())
+# main()

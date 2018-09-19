@@ -6,7 +6,9 @@ for(var i = 0; i < 8; i++) {
 	}
 }
 
-PLAYER = true;
+READY = true;
+var tabuleiro;
+var jogador = true;
 
 const inspect_table = () => {
 	let s = '    0 1 2 3 4 5 6 7\n';
@@ -27,7 +29,7 @@ const inspect_table = () => {
 
 $(document).ready(function() {
 	console.log('document ready :3');
-
+	$('#actual').text('Brancas');
 	render_table();
 	start();
 
@@ -36,31 +38,39 @@ $(document).ready(function() {
 	});
 
 	$('.cell').click((e) => {
-		if(!PLAYER)
+		if(!READY)
 			return;
 
-		PLAYER = false;
+		READY = false;
 		const id = e.target.id.split('_');
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
 
 		if(TABLE[i][j] === '') {
+			console.log('oi')
+			console.log(tabuleiro)
+			console.log('oi')
 			$.ajax({
 				type: 'POST',
-				url: '/play',
-				data: JSON.stringify({ cmd: '', cell: `${i} ${j}` }),
+				url: 'http://127.0.0.1:5000/play',
+				data: JSON.stringify({ cmd: '', cell: `${i} ${j}`, tabuleiro: tabuleiro, jogador: jogador}),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				success: (data) => {
-					draw_many(data.player, true);
-					$('#actual').text('Gary');
+					tabuleiro = data['tabuleiro']
+					console.log(data);
+					atualizarTabuleiro(tabuleiro);
+					// draw_many(data.player, true);
+					// $('#actual').text('Gary');
 
-					setTimeout(() => {
-						draw_many(data.ai, false);
-					$('#actual').text('Human');
-					}, 2000);
-
-					PLAYER = true;
+					// setTimeout(() => {
+					// 	draw_many(data.ai, false);
+					// $('#actual').text('Human');
+					// }, 2000);
+					if(data['jogadaValida']){
+						mudarJogador();
+					}
+					READY = true;
 				},
 				failure: (data) => alert(data)
 			});
@@ -69,21 +79,32 @@ $(document).ready(function() {
 
 });
 
-const draw_many = (arr, player) => {
-	console.log(arr, arr.length);
-	for(let i = 0; i < arr.length; i++) {
-		const x = arr[i][0];
-		const y = arr[i][2];
-
-		console.log(x, y);
-		TABLE[x][y] = player ? 1 : 0;
-		draw_circle(x, y, player ? 'black' : 'white');
+function mudarJogador(){
+	jogador = !jogador;
+	if(jogador){
+		$('#actual').text('Brancas');
 	}
+	else{
+		$('#actual').text('Pretas');
 
-	inspect_table();
+	}
 }
 
-const start = () => {
+// const draw_many = (arr, player) => {
+// 	console.log(arr, arr.length);
+// 	for(let i = 0; i < arr.length; i++) {
+// 		const x = arr[i][0];
+// 		const y = arr[i][2];
+
+// 		console.log(x, y);
+// 		TABLE[x][y] = player ? 1 : 0;
+// 		draw_circle(x, y, player ? 'black' : 'white');
+// 	}
+
+// 	inspect_table();
+// }
+
+function start(){
 	for(var i = 0; i < 8; i++) {
 		for(var j = 0; j< 8; j++) {
 			TABLE[i][j] = '';
@@ -97,24 +118,25 @@ const start = () => {
 
 	$.ajax({
 		type: 'POST',
-		url: '/start',
+		url: 'http://127.0.0.1:5000/start',
 		data: JSON.stringify({ table: TABLE }),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: (data) => {
-			for(var i = 0; i < 8; i++) {
-				for(var j = 0; j< 8; j++) {
-					draw_circle(i, j, '')
-				}
-			}
-
-			draw_circle(3, 3, 'white');
-			draw_circle(4, 4, 'white');
-			draw_circle(3, 4, 'black');
-			draw_circle(4, 3, 'black');
+			atualizarTabuleiro(data['tabuleiro']);
+			console.log(data);
+			tabuleiro = data['tabuleiro'];
 		},
 		failure: (data) => alert(data)
 	});
+}
+
+function atualizarTabuleiro(tabuleiro){
+	for(var i = 0; i < tabuleiro.length; i++) {
+		for(var j = 0; j< tabuleiro[0].length; j++) {
+			draw_circle(i, j, tabuleiro[i][j])
+		}
+	}
 }
 
 const render_table = () => {
@@ -130,6 +152,16 @@ const render_table = () => {
 	}
 }
 
-const draw_circle = (i, j, color) => {
+const draw_circle = (i, j, cor) => {
+	var color;
+	if(cor == 'P'){
+		color = 'black';
+	}
+	else if(cor == 'B'){
+		color = 'white';
+	}
+	else{
+		color = '';
+	}
 	$(`#cell_${i}_${j}`).css('background-color', color);
 }
