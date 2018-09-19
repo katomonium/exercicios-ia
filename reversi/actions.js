@@ -6,7 +6,9 @@ for(var i = 0; i < 8; i++) {
 	}
 }
 
-PLAYER = true;
+READY = true;
+var tabuleiro;
+var jogador = true;
 
 const inspect_table = () => {
 	let s = '    0 1 2 3 4 5 6 7\n';
@@ -36,31 +38,37 @@ $(document).ready(function() {
 	});
 
 	$('.cell').click((e) => {
-		if(!PLAYER)
+		if(!READY)
 			return;
 
-		PLAYER = false;
+		READY = false;
 		const id = e.target.id.split('_');
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
 
 		if(TABLE[i][j] === '') {
+			console.log('oi')
+			console.log(tabuleiro)
+			console.log('oi')
 			$.ajax({
 				type: 'POST',
 				url: 'http://127.0.0.1:5000/play',
-				data: JSON.stringify({ cmd: '', cell: `${i} ${j}` }),
+				data: JSON.stringify({ cmd: '', cell: `${i} ${j}`, tabuleiro: tabuleiro, jogador: jogador}),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				success: (data) => {
-					draw_many(data.player, true);
-					$('#actual').text('Gary');
+					tabuleiro = data['tabuleiro']
+					console.log(data);
+					atualizarTabuleiro(tabuleiro);
+					// draw_many(data.player, true);
+					// $('#actual').text('Gary');
 
-					setTimeout(() => {
-						draw_many(data.ai, false);
-					$('#actual').text('Human');
-					}, 2000);
-
-					PLAYER = true;
+					// setTimeout(() => {
+					// 	draw_many(data.ai, false);
+					// $('#actual').text('Human');
+					// }, 2000);
+					jogador = !jogador;
+					READY = true;
 				},
 				failure: (data) => alert(data)
 			});
@@ -69,21 +77,21 @@ $(document).ready(function() {
 
 });
 
-const draw_many = (arr, player) => {
-	console.log(arr, arr.length);
-	for(let i = 0; i < arr.length; i++) {
-		const x = arr[i][0];
-		const y = arr[i][2];
+// const draw_many = (arr, player) => {
+// 	console.log(arr, arr.length);
+// 	for(let i = 0; i < arr.length; i++) {
+// 		const x = arr[i][0];
+// 		const y = arr[i][2];
 
-		console.log(x, y);
-		TABLE[x][y] = player ? 1 : 0;
-		draw_circle(x, y, player ? 'black' : 'white');
-	}
+// 		console.log(x, y);
+// 		TABLE[x][y] = player ? 1 : 0;
+// 		draw_circle(x, y, player ? 'black' : 'white');
+// 	}
 
-	inspect_table();
-}
+// 	inspect_table();
+// }
 
-const start = () => {
+function start(){
 	for(var i = 0; i < 8; i++) {
 		for(var j = 0; j< 8; j++) {
 			TABLE[i][j] = '';
@@ -104,10 +112,7 @@ const start = () => {
 		success: (data) => {
 			atualizarTabuleiro(data['tabuleiro']);
 			console.log(data);
-			// draw_circle(3, 3, 'white');
-			// draw_circle(4, 4, 'white');
-			// draw_circle(3, 4, 'black');
-			// draw_circle(4, 3, 'black');
+			tabuleiro = data['tabuleiro'];
 		},
 		failure: (data) => alert(data)
 	});

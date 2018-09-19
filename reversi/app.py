@@ -6,16 +6,37 @@ import copy
 class Reversi:
 
 
-    def __init__(self):
-        self.tabuleiro = []
-        for i in range(8):
-            self.tabuleiro.append([])
-            for j in range(8):
-                self.tabuleiro[i].append('.')
+    def __init__(self, tab = None):
+        if(tab == None):
+            self.tabuleiro = []
+            for i in range(8):
+                self.tabuleiro.append([])
+                for j in range(8):
+                    self.tabuleiro[i].append('.')
 
-        self.pecas = {}
-        self.pecas['P'] = []
-        self.pecas['B'] = []
+            self.pecas = {}
+            self.pecas['P'] = []
+            self.pecas['B'] = []
+
+            self.tabuleiro[4][3] = "P"
+            self.tabuleiro[3][4] = "P"
+            self.tabuleiro[3][3] = "B"
+            self.tabuleiro[4][4] = "B"
+
+            self.pecas['B'] = [(3, 3), (4, 4)]
+            self.pecas['P'] = [(4, 3), (3, 4)]
+        else:
+            self.tabuleiro = tab
+
+            self.pecas = {}
+            self.pecas['P'] = []
+            self.pecas['B'] = []
+            for i in range(len(self.tabuleiro)):
+                for j in range(len(self.tabuleiro[i])):
+                    if(self.tabuleiro[i][j] == 'P'):
+                        self.pecas['P'].append((i,j))
+                    if(self.tabuleiro[i][j] == 'B'):
+                        self.pecas['B'].append((i,j))
 
         self.possiveisJogadas = {}
         self.possiveisJogadas['P'] = {}
@@ -25,13 +46,7 @@ class Reversi:
         self.inimigo['P'] = 'B'
         self.inimigo['B'] = 'P'
 
-        self.tabuleiro[4][3] = "P"
-        self.tabuleiro[3][4] = "P"
-        self.tabuleiro[3][3] = "B"
-        self.tabuleiro[4][4] = "B"
-
-        self.pecas['B'] = [(3, 3), (4, 4)]
-        self.pecas['P'] = [(4, 3), (3, 4)]
+        self.atualizaPossiveisJogadas()
 
     def getTabuleiro(self):
         return self.tabuleiro
@@ -39,11 +54,18 @@ class Reversi:
     def getJogo(self):
         jogo = {}
         jogo['tabuleiro'] = self.tabuleiro
-        copiaPossiveisJogadas = copy.deepcopy(self.possiveisJogadas)
+        
+        jogadas = {}
+        for j in self.possiveisJogadas:
+            jogadas[j] = {}
+            for key in self.possiveisJogadas[j]:
+                stringChave = str(key[0]) + " " + str(key[1])
+                jogadas[j][stringChave] = []
+                for valor in self.possiveisJogadas[j][key]:
+                    stringValor = [valor[0], valor[1]]
+                    jogadas[j][stringChave].append(stringValor)
+        jogo['possiveisJogadas'] = jogadas
 
-        for j in copiaPossiveisJogadas:
-            for jogada in copiaPossiveisJogadas[j]:
-                jogada = list(jogada)
         return jogo
 
 
@@ -93,19 +115,19 @@ class Reversi:
             self.lerJogada(jogadorAtual)
         
     # @app.route('/play', methods = ['POST'])
-    def jogar(self):
-        data = json.loads(request.data)
-        if(data['cmd'] == 'start'):
-            # Star / Restart code here
-            print('starting...')
-            # return jsonify({'code': 200})
+    # def jogar(self):
+    #     data = json.loads(request.data)
+    #     if(data['cmd'] == 'start'):
+    #         # Star / Restart code here
+    #         print('starting...')
+    #         # return jsonify({'code': 200})
 
-        pos = data['cell'].split()
+    #     pos = data['cell'].split()
 
-        response = {
-            'player': [data['cell']],
-            'ai': moves.pop()
-        }
+    #     response = {
+    #         'player': [data['cell']],
+    #         'ai': moves.pop()
+    #     }
 
         # return jsonify(response)
 
@@ -416,3 +438,8 @@ class Reversi:
         print(s)
         print(self.pecas)
         return s
+
+# def main():
+#     r = Reversi()
+#     print(r.getJogo())
+# main()
