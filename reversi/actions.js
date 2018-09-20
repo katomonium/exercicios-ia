@@ -9,6 +9,7 @@ for(var i = 0; i < 8; i++) {
 READY = true;
 var tabuleiro;
 var jogador = false;
+const time = 10;
 
 const inspect_table = () => {
 	let s = '    0 1 2 3 4 5 6 7\n';
@@ -16,10 +17,10 @@ const inspect_table = () => {
 	for(var i = 0; i < 8; i++) {
 		s += `${i} [ `;
 		for(var j = 0; j < 8; j++) {
-			if(TABLE[i][j] === '')
+			if(tabuleiro[i][j] === '')
 				s += '· '
 			else
-				s += `${TABLE[i][j]} `;
+				s += `${tabuleiro[i][j]} `;
 		}
 		s += ']\n'
 	}
@@ -46,31 +47,34 @@ $(document).ready(function() {
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
 
-		if(TABLE[i][j] === '') {
+		if(TABLE[i][j] == '') {
 			$('.possivel').text('')
 			$('.possivel').removeClass('possivel');
 
 			$.ajax({
 				type: 'POST',
 				url: 'http://127.0.0.1:5000/play',
-				data: JSON.stringify({ cmd: '', cell: `${i} ${j}`, tabuleiro: tabuleiro, jogador: jogador}),
+				data: JSON.stringify({ cmd: '', cell: `${i} ${j}`, tabuleiro: tabuleiro}),
 				contentType: "application/json; charset=utf-8",
 				dataType: "json",
 				success: (data) => {
 					tabuleiro = data['tabuleiro']
 					atualizarTabuleiro(tabuleiro);
+					inspect_table();
 					if(data['jogadaValida']){
 						mudarJogador();
 					}
-					const j = jogador ? 'B' : 'P';
-					if(data['possiveisJogadas'][j].length === 0) {
+					// const j = jogador ? 'B' : 'P';
+					if(data['possiveisJogadas']['B'].length === 0) {
 						alert('No moves');
 						mudarJogador();
 						READY = true;
 					}
 
-					marcarPossiveis(data['possiveisJogadas'][j]);
-					READY = true;
+					marcarPossiveis(data['possiveisJogadas']['B']);
+					// READY = true;
+
+					setTimeout(() => {return jogadaIA()}, time);
 				},
 				failure: (data) => alert(data)
 			});
@@ -78,6 +82,37 @@ $(document).ready(function() {
 	});
 
 });
+
+function jogadaIA() {
+	console.log("ia");
+	$('.possivel').text('')
+	$('.possivel').removeClass('possivel');
+
+	$.ajax({
+		type: 'POST',
+		url: 'http://127.0.0.1:5000/ia',
+		data: JSON.stringify({ tabuleiro: tabuleiro }),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: (data) => {
+			tabuleiro = data['tabuleiro']
+			atualizarTabuleiro(tabuleiro);
+			inspect_table();
+			mudarJogador();
+
+			// const j = jogador ? 'B' : 'P';
+			if(data['possiveisJogadas']['P'].length === 0) {
+				alert('No moves');
+				mudarJogador();
+				setTimeout(() => {return jogadaIA()}, time);
+			}
+
+			marcarPossiveis(data['possiveisJogadas']['P']);
+			READY = true;
+		},
+		failure: (data) => alert(data)
+	});
+}
 
 function mudarJogador(){
 	jogador = !jogador;
