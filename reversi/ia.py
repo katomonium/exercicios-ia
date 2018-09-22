@@ -1,4 +1,4 @@
-from app import Reversi
+from reversi import Reversi
 from copy import deepcopy
 
 def inverteCor(cor):

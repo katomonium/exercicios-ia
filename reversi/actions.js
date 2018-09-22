@@ -1,15 +1,11 @@
-let TABLE = [];
-for(var i = 0; i < 8; i++) {
-	TABLE.push([]);
-	for(var j = 0; j< 8; j++) {
-		TABLE[i].push('');
-	}
-}
-
 READY = true;
 var tabuleiro;
 var jogador = false;
-const time = 10;
+const time = 1000;
+const pecas = {
+	'P': 0,
+	'B': 0,
+}
 
 const inspect_table = () => {
 	let s = '    0 1 2 3 4 5 6 7\n';
@@ -47,41 +43,49 @@ $(document).ready(function() {
 		const i = parseInt(id[1]);
 		const j = parseInt(id[2]);
 
-		if(TABLE[i][j] == '') {
-			$('.possivel').text('')
-			$('.possivel').removeClass('possivel');
-
-			$.ajax({
-				type: 'POST',
-				url: 'http://127.0.0.1:5000/play',
-				data: JSON.stringify({ cmd: '', cell: `${i} ${j}`, tabuleiro: tabuleiro}),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: (data) => {
-					tabuleiro = data['tabuleiro']
-					atualizarTabuleiro(tabuleiro);
-					inspect_table();
-					if(data['jogadaValida']){
-						mudarJogador();
-					}
-					// const j = jogador ? 'B' : 'P';
-					if(data['possiveisJogadas']['B'].length === 0) {
-						alert('No moves');
-						mudarJogador();
-						READY = true;
-					}
-
-					marcarPossiveis(data['possiveisJogadas']['B']);
-					// READY = true;
-
-					setTimeout(() => {return jogadaIA()}, time);
-				},
-				failure: (data) => alert(data)
-			});
-		}
+		if(tabuleiro[i][j] === '.')
+			jogadaHumano(i, j);
 	});
 
 });
+
+function atualizaPontos() {
+	$('#pts-p').text(pecas['P']);
+	$('#pts-b').text(pecas['B']);
+}
+
+function jogadaHumano(i, j) {
+	$('.possivel').text('')
+	$('.possivel').removeClass('possivel');
+
+	$.ajax({
+		type: 'POST',
+		url: 'http://127.0.0.1:5000/play',
+		data: JSON.stringify({ cell: `${i} ${j}`, tabuleiro: tabuleiro }),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: (data) => {
+			tabuleiro = data['tabuleiro']
+			atualizarTabuleiro(tabuleiro);
+			console.log(pecas);
+			if(pecas['P'] + pecas['B'] === 64) {
+				const winner = pecas['P'] > pecas['B'] ? 'Pretas' : 'Brancas';
+				$('#ln0').text(`Winner: ${winner}`);
+				return;
+			}
+
+			if(Object.keys(data['possiveisJogadas']['B']).length === 0) {
+				marcarPossiveis(data['possiveisJogadas']['P']);
+				READY = true;
+			} else {
+				marcarPossiveis(data['possiveisJogadas']['B']);
+
+				setTimeout(() => {return jogadaIA()}, time);
+			}
+		},
+		failure: (data) => alert(data)
+	});
+}
 
 function jogadaIA() {
 	console.log("ia");
@@ -99,8 +103,12 @@ function jogadaIA() {
 			atualizarTabuleiro(tabuleiro);
 			inspect_table();
 			mudarJogador();
+			if(pecas['P'] + pecas['B'] === 64) {
+				const winner = pecas['P'] > pecas['B'] ? 'Pretas' : 'Brancas';
+				$('#ln0').text(`Winner: ${winner}`);
+				return;
+			}
 
-			// const j = jogador ? 'B' : 'P';
 			if(data['possiveisJogadas']['P'].length === 0) {
 				alert('No moves');
 				mudarJogador();
@@ -129,27 +137,33 @@ function start(){
 	$('.possivel').text('')
 	$('.possivel').removeClass('possivel');
 
-	for(var i = 0; i < 8; i++) {
-		for(var j = 0; j< 8; j++) {
-			TABLE[i][j] = '';
-		}
-	}
+	table = [
+		[ 'B',  'B',  'B',  'P',  'P',  'P',  'P',  'P',  ],
+		[ 'B',  'B',  'B',  'B',  'P',  'P',  'P',  'P',  ],
+		[ '.',  'B',  'P',  'P',  'B',  'P',  'B',  'P',  ],
+		[ 'B',  'B',  'B',  'B',  'B',  'B',  'B',  'P',  ],
+		[ '.',  'B',  'P',  'B',  'B',  'P',  'B',  'P',  ],
+		[ 'B',  'B',  'P',  'P',  'B',  'P',  'B',  'B',  ],
+		[ 'B',  'B',  'P',  'P',  'P',  'P',  'B',  '.',  ],
+		[ 'B',  'B',  'B',  'P',  'P',  'P',  'P',  'P',  ],
+	]
 
-	TABLE[3][3] = 0;
-	TABLE[4][4] = 0;
-	TABLE[3][4] = 1;
-	TABLE[4][3] = 1;
+	//pecas['P'] = 2;
+	//pecas['B'] = 2;
+	//pecas['T'] = 2;
 
 	$.ajax({
 		type: 'POST',
 		url: 'http://127.0.0.1:5000/start',
-		data: JSON.stringify({ table: TABLE }),
+		data: JSON.stringify({ table }),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: (data) => {
 			atualizarTabuleiro(data['tabuleiro']);
 			marcarPossiveis(data['possiveisJogadas']['P']);
 			tabuleiro = data['tabuleiro'];
+
+			inspect_table();
 		},
 		failure: (data) => alert(data)
 	});
@@ -169,11 +183,16 @@ function marcarPossiveis(posicoes) {
 }
 
 function atualizarTabuleiro(tabuleiro){
+	pecas['P'] = 0;
+	pecas['B'] = 0;
 	for(var i = 0; i < tabuleiro.length; i++) {
 		for(var j = 0; j< tabuleiro[0].length; j++) {
-			draw_circle(i, j, tabuleiro[i][j])
+			draw_circle(i, j, tabuleiro[i][j]);
+			pecas[tabuleiro[i][j]] += 1;
 		}
 	}
+
+	atualizaPontos();
 }
 
 const render_table = () => {
