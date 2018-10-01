@@ -134,28 +134,13 @@ function mudarJogador(){
 }
 
 function start(){
-	$('.possivel').text('')
+	$('.possivel').text('');
 	$('.possivel').removeClass('possivel');
-
-	table = [
-		[ 'B',  'B',  'B',  'P',  'P',  'P',  'P',  'P',  ],
-		[ 'B',  'B',  'B',  'B',  'P',  'P',  'P',  'P',  ],
-		[ '.',  'B',  'P',  'P',  'B',  'P',  'B',  'P',  ],
-		[ 'B',  'B',  'B',  'B',  'B',  'B',  'B',  'P',  ],
-		[ '.',  'B',  'P',  'B',  'B',  'P',  'B',  'P',  ],
-		[ 'B',  'B',  'P',  'P',  'B',  'P',  'B',  'B',  ],
-		[ 'B',  'B',  'P',  'P',  'P',  'P',  'B',  '.',  ],
-		[ 'B',  'B',  'B',  'P',  'P',  'P',  'P',  'P',  ],
-	]
-
-	//pecas['P'] = 2;
-	//pecas['B'] = 2;
-	//pecas['T'] = 2;
 
 	$.ajax({
 		type: 'POST',
 		url: 'http://127.0.0.1:5000/start',
-		data: JSON.stringify({ table }),
+		data: JSON.stringify({}),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: (data) => {
