@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+
+const static int POP_SIZE = 30;
+const static int MUT_RATE = 1;
 
 static char*
 char_to_bits(const char c)
@@ -70,12 +74,12 @@ fitness(const char x)
 }
 
 void
-selection_sort(char *pop)
+selection_sort(char *pop, int size)
 {
-	for(int i = 0; i < 29; i++) {
+	for(int i = 0; i < size-1; i++) {
 		int max_pos = i;
 
-		for(int j = i+1; j < 30; ++j) {
+		for(int j = i+1; j < size; ++j) {
 			if(fitness(pop[j]) > fitness(pop[max_pos]))
 				max_pos = j;
 		}
@@ -87,26 +91,75 @@ selection_sort(char *pop)
 	}
 }
 
+char
+tournament(char *pop, int size)
+{
+	printf("tournament\n");
+	
+	char *cpy_pop;
+	cpy_pop = malloc(10);
+	memcpy(cpy_pop, pop, 10);
+	
+	char selected[10];
+	memset(&selected, -42, 10);
+	
+	int s;
+	s = size - 1;
+	for(int i = 0; i < 5; ++i) {
+		int pos;
+		pos = rand() % s + 1;
+		selected[i] = cpy_pop[pos];
+		printf("#%d - %d\n", pos, cpy_pop[pos]);
+		
+		cpy_pop[pos] = cpy_pop[s];
+		cpy_pop[s] = -42;
+		s--;
+	}
+	
+	printf("[ ");
+	for(int i = 0; i < 10; i++)
+		printf("%3d ", cpy_pop[i]);
+	printf(" ]\n");
+	
+	printf("[ ");
+	for(int i = 0; i < 10; i++)
+		printf("%3d ", selected[i]);
+	printf(" ]\n");
+	
+	free(cpy_pop);
+	return 0x00;
+}
+
 int
 main()
 {
 	srand(time(NULL));
+	
+	char a[] = { 3, 10, -10, 2, -9, 8, 6, 0, -4, -8 };
 
-	char c[30];
-	gen_population(&c);
-	selection_sort(&c);
+	tournament(&a, 10);
 
-	for(int i = 0; i < 30; i++)
-		printf("#%2d: %2d   ->\t%d\n", i, c[i], fitness(c[i]));
-	printf("\n");
+	//~ char *c;
+	//~ c = malloc(POP_SIZE);
+	//~ gen_population(c);
+	//~ selection_sort(c);
 
-	char c2[15];
-	for(int i = 0; i < 15; i++)
-		c2[i] = mutate(crossover(c[2*i], c[2*i + 1], 4), 1);
+	//~ for(int i = 0; i < POP_SIZE; i++)
+		//~ printf("#%2d: %3d   ->\t%d\n", i, c[i], fitness(c[i]));
+	//~ printf("\n");
 
-	/* selection_sort(&c2); */
-	for(int i = 0; i < 15; i++)
-		printf("#%2d: %2d   ->\t%d\n", i, c2[i], fitness(c2[i]));
+	//~ char *c2;
+	//~ c2 = malloc(POP_SIZE);
+	//~ for(int i = 0; i < 15; i++) {
+		//~ c2[i] = mutate(crossover(c[2*i], c[2*i + 1], 4), MUT_RATE);
+		//~ c2[POP_SIZE/2 + i] = mutate(crossover(c[2*i + 1], c[2*i], 4), MUT_RATE);
+	//~ }
 
+	//~ selection_sort(c2);
+	//~ for(int i = 0; i < POP_SIZE; i++)
+		//~ printf("#%2d: %3d   ->\t%d\n", i, c2[i], fitness(c2[i]));
+
+	//~ free(c);
+	//~ free(c2);
 	return 0;
 }
