@@ -71,7 +71,7 @@ mutate(const unsigned char c, int t)
 	if((rand() % 100) > t)
 		return c;
 
-	printf("mutate\n");
+	printf("m");
 	char l, m;
 	do {
 		l = 0x80 >> (rand() % (8 + 1));
@@ -147,9 +147,10 @@ main()
 	for(int i = 0; i < POP_SIZE; i++)
 		c[i] = rand() % (20 + 1) - 10;
 
+	printf("[");
 	for(int i = 0; i < POP_SIZE; i++)
-		printf("#%2d: %3d   ->\t%d\n", i, c[i], fitness(c[i]));
-	printf("\n");
+		printf("%d,",  c[i]);
+	printf("]\n");
 
 	char *c2;
 	c2 = malloc(POP_SIZE);
@@ -159,11 +160,29 @@ main()
 		b = tournament(c, 5, POP_SIZE - 2*i - 1);
 
 		c2[i] = mutate(crossover(a, b, 4), MUT_RATE);
+		if((c2[i] > 10) || (c2[i] < -10)) {
+			printf("aaaaaaaaaaaaaaa\n");
+			printf("%d x %d = %d\n", a, b, c2[i]);
+			printf("%s x ", char_to_bits(a));
+			printf("%s = ", char_to_bits(b));
+			printf("%s\n", char_to_bits(c2[i]));
+			exit(-44);
+		}
 		c2[POP_SIZE/2 + i] = mutate(crossover(b, a, 4), MUT_RATE);
-	}
+		if((c2[POP_SIZE/2 + i] > 10) || (c2[POP_SIZE/2 + i] < -10)) {
+			printf("bbbbbbbbbbbbbbb\n");
+			printf("%d x %d = %d\n", a, b, c2[POP_SIZE/2 + i]);
+			exit(-44);
+		}
 
+		printf(".");
+	}
+	printf("\n");
+
+	printf("[");
 	for(int i = 0; i < POP_SIZE; i++)
-		printf("#%2d: %3d   ->\t%d\n", i, c2[i], fitness(c2[i]));
+		printf("%d,",  c2[i]);
+	printf("]\n");
 
 	free(c);
 	free(c2);
