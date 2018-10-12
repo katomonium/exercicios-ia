@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-g -O0 -pedantic -std=c99 -Wall -Wextra
+CFLAGS=-g -O0 -pedantic -Wall -Wextra
 LFLAGS=-pthread
 NAME=ga
 
