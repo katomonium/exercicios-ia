@@ -3,8 +3,6 @@
 #include <time.h>
 #include <string.h>
 
-const static int MUT_RATE = 1;
-
 static char*
 char_to_bits(const char c)
 {
@@ -163,15 +161,19 @@ inspect_pop(char *pop, int size)
 int
 main(int argc, char **argv)
 {
-	if(argc < 3) {
-		fprintf(stderr, "%s <pop-size> <gen-num>\n", argv[0]);
+	if(argc < 4) {
+		fprintf(stderr, "%s <pop-size> <gen-num> <mut-rate> [flag]\n", argv[0]);
 		exit(1);
 	}
 
-	int pop_size, gen_num;
+	int pop_size, gen_num, mut_rate, flag;
 	pop_size = atoi(argv[1]);
-	printf("%d\n", pop_size);
 	gen_num = atoi(argv[2]);
+	mut_rate = atoi(argv[3]);
+
+	flag = argc > 4 ? atoi(argv[4]) : 0;
+	
+	printf("%d\n", pop_size);
 
 	srand(time(NULL));
 
@@ -179,7 +181,7 @@ main(int argc, char **argv)
 	pop = malloc(pop_size);
 
 	for(int i = 0; i < pop_size; i++)
-		pop[i] = encode(rand() % (20 + 1) - 10);
+		pop[i] = encode(rand() % (31 + 1) - 16);
 	
 	for(int i = 0; i < gen_num; i++) {
 		selection_sort(pop, pop_size);
@@ -189,8 +191,17 @@ main(int argc, char **argv)
 		char a, b, an, bn;
 		a = tournament(pop, 5, pop_size);
 		b = tournament(pop, 5, pop_size - 1);
-		an = mutate(crossover(a, b, 2), MUT_RATE);
-		bn = mutate(crossover(b, a, 2), MUT_RATE);
+		an = crossover(a, b, 2);
+		bn = crossover(b, a, 2);
+
+		if(flag == 1) {
+			for(int j = 0; j < pop_size; j++){
+				pop[j] = mutate(pop[j], mut_rate);
+			}	
+		} else {
+			an = mutate(an, mut_rate);
+			bn = mutate(bn, mut_rate);
+		}
 
 		pop[pop_size - 1]  = a;
 		pop[pop_size - 2]  = b;
