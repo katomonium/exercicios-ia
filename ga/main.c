@@ -5,7 +5,6 @@
 
 const static int MUT_RATE = 1;
 
-/*
 static char*
 char_to_bits(const char c)
 {
@@ -24,7 +23,6 @@ char_to_bits(const char c)
 
 	return b;
 }
-*/
 
 char
 encode(const char c)
@@ -83,17 +81,19 @@ crossover(const unsigned char a, const unsigned char b, int pos)
 unsigned char
 mutate(const unsigned char c, int t)
 {
-	if((rand() % 100) > t)
-		return c;
-
 	char l, m;
-	do {
-		l = 0x80 >> (rand() % (8 + 1));
-		m = c & (~l);
+	m = c;
+	l = 0x01;
+	for(int i = 0; i < 5; i++) {
+		if((rand() % 100) < t) {
+			if((c & l) == 0x00)
+				m |= l;
+			else
+				m &= ~l;
+		}
 
-		if((c & l) == 0x00)
-			m |= l;
-	} while((m < -20) || (m > 20));
+		l = l << 1;
+	}
 
 	return m;
 }
