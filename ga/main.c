@@ -70,9 +70,9 @@ crossover(const unsigned char a, const unsigned char b, int pos)
 
 	unsigned char r, t, l;
 	r = 0x00;
-	l = 0x80 >> pos;
+	l = 0x01 << pos;
 
-	for(t = 0x80; t > 0x00; t = t >> 1)
+	for(t = 0x01; t <= 0x20; t = t << 1)
 		r |= t > l ? a & t : b & t;
 
 	return r;
@@ -170,40 +170,36 @@ main(int argc, char **argv)
 
 	int pop_size, gen_num;
 	pop_size = atoi(argv[1]);
+	printf("%d\n", pop_size);
 	gen_num = atoi(argv[2]);
 
 	srand(time(NULL));
 
-	char *pop, *new_pop;
+	char *pop;
 	pop = malloc(pop_size);
-	new_pop = malloc(pop_size);
 
 	for(int i = 0; i < pop_size; i++)
 		pop[i] = encode(rand() % (20 + 1) - 10);
-
-	memcpy(new_pop, pop, pop_size);
-	selection_sort(new_pop, pop_size);
-	printf("pop #00 best_one : %3d\n", decode(new_pop[0]));
-	inspect_pop(pop, pop_size);
-
-	for(int p = 1; p < gen_num; p++) {
-		selection_sort(new_pop, pop_size);
-		printf("pop #%02d best_one : %3d\n", p, decode(new_pop[0]));
-
-		for(int i = 0; i < pop_size/2; i++) {
-			char a, b;
-			a = tournament(pop, 5, pop_size - 2*i);
-			b = tournament(pop, 5, pop_size - 2*i - 1);
-
-			new_pop[i] = mutate(crossover(a, b, 4), MUT_RATE);
-			new_pop[pop_size/2 + i] = mutate(crossover(b, a, 4), MUT_RATE);
-		}
-
-		memcpy(pop, new_pop, pop_size);
+	
+	for(int i = 0; i < gen_num; i++) {
+		selection_sort(pop, pop_size);
+		printf("pop #%2d best_one : %3d\n", i, decode(pop[0]));
 		inspect_pop(pop, pop_size);
+
+		char a, b, an, bn;
+		a = tournament(pop, 5, pop_size);
+		b = tournament(pop, 5, pop_size - 1);
+		an = mutate(crossover(a, b, 2), MUT_RATE);
+		bn = mutate(crossover(b, a, 2), MUT_RATE);
+
+		pop[pop_size - 1]  = a;
+		pop[pop_size - 2]  = b;
+
+		selection_sort(pop, pop_size);
+		pop[pop_size - 1]  = an;
+		pop[pop_size - 2]  = bn;
 	}
 
 	free(pop);
-	free(new_pop);
 	return 0;
 }

@@ -6,6 +6,8 @@ f = open('log', 'r')
 lines = f.readlines()
 f.close()
 
+pop_size = int(lines.pop(0))
+
 pops = []
 for l in lines:
     if l[0] == '[':
@@ -30,11 +32,16 @@ for j in range(len(pops)):
         x.append(k)
         y.append(d[k])
 
-    plt.scatter(x, y, s=5, c=[(0,0,0)], alpha=0.5)
-    plt.title('Population {:02d}'.format(j))
+    axes = plt.gca()
+    axes.set_xlim([-17, 16])
+    axes.set_ylim([0, pop_size+1])
+
+    # plt.scatter(x, y, s=5, c=[(0,0,0)], alpha=0.5)
+    plt.bar(x, y, 1, color='blue')
+    plt.title('Population {:03d}'.format(j))
     plt.xlabel('x')
-    plt.ylabel('y')
-    name = 'pop{:02d}.png'.format(j)
+    plt.ylabel('qnt')
+    name = 'pop{:03d}.png'.format(j)
     plt.savefig(name)
     print('saving {}'.format(name))
     plt.clf()
