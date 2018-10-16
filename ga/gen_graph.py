@@ -1,7 +1,8 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-f = open('log', 'r')
+f = open(sys.argv[1], 'r')
 
 lines = f.readlines()
 f.close()
