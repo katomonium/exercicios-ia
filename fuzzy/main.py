@@ -1,29 +1,58 @@
+import random
+import sys
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+import matplotlib.pyplot as plt
 
-# Fuzzificação
-quality = ctrl.Antecedent(np.arange(0, 11, 1), 'quality')
-service = ctrl.Antecedent(np.arange(0, 11, 1), 'service')
-tip = ctrl.Consequent(np.arange(0, 26, 1), 'tip')
+def fuzzing(vel, dis, flag = 0):
+    # Fuzzificacao
+    velocidade = ctrl.Antecedent(np.arange(0, 101, 1), 'velocidade')
+    distancia = ctrl.Antecedent(np.arange(0, 101, 1), 'distancia')
+    pressao = ctrl.Consequent(np.arange(0, 101, 1), 'pressao')
 
-quality.automf(5)
-service.automf(5)
+    velocidade.automf(5)
+    distancia.automf(5)
 
-tip['low'] = fuzz.trimf(tip.universe, [0, 0, 13])
-tip['medium'] = fuzz.trimf(tip.universe, [0, 13, 25])
-tip['high'] = fuzz.trimf(tip.universe, [13, 25, 25])
+    # pressao['low'] = fuzz.trimf(pressao.universe, [0, 0, 50])
+    # pressao['medium'] = fuzz.trimf(pressao.universe, [0, 50, 100])
+    # pressao['high'] = fuzz.trimf(pressao.universe, [50, 100, 100])
 
-# Regras
-rule1 = ctrl.Rule(quality['poor'] | service['poor'], tip['low'])
-rule2 = ctrl.Rule(service['average'], tip['medium'])
-rule3 = ctrl.Rule(service['good'] | quality['good'], tip['high'])
+    pressao['poor'] = fuzz.gaussmf(pressao.universe, 0, 10)
+    pressao['mediocre'] = fuzz.gaussmf(pressao.universe, 25, 10)
+    pressao['average'] = fuzz.gaussmf(pressao.universe, 50, 10)
+    pressao['decent'] = fuzz.gaussmf(pressao.universe, 75, 10)
+    pressao['good'] = fuzz.gaussmf(pressao.universe, 100, 10)
 
-tipping_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
-tipping = ctrl.ControlSystemSimulation(tipping_ctrl)
+    # Regras
+    regras = []
 
-tipping.input['quality'] = 0.5
-tipping.input['service'] = 0.8
+    regras.append(ctrl.Rule(velocidade['mediocre'] & distancia['average'], pressao['poor']))
+    regras.append(ctrl.Rule(velocidade['mediocre'] & distancia['mediocre'], pressao['mediocre']))
+    regras.append(ctrl.Rule(velocidade['mediocre'] & distancia['poor'], pressao['average']))
+    regras.append(ctrl.Rule(velocidade['average']  & distancia['average'], pressao['average']))
+    regras.append(ctrl.Rule(velocidade['average']  & distancia['mediocre'], pressao['decent']))
+    regras.append(ctrl.Rule(velocidade['average']  & distancia['poor'], pressao['good']))
+    regras.append(ctrl.Rule(velocidade['decent'] & distancia['good'], pressao['average']))
+    regras.append(ctrl.Rule(velocidade['decent'] & distancia['decent'], pressao['decent']))
 
-tipping.compute()
-print(tipping.output['tip'])
+    regras.append(ctrl.Rule(velocidade['poor'], pressao['poor']))
+    # regras.append(ctrl.Rule(velocidade['mediocre'] | distancia['good'], pressao['decent']))
+    regras.append(ctrl.Rule(velocidade['good'], pressao['good']))
+
+    pressao_ctrl = ctrl.ControlSystem(regras)
+    pressao_sim = ctrl.ControlSystemSimulation(pressao_ctrl)
+
+    pressao_sim.input['velocidade'] = vel
+    pressao_sim.input['distancia'] = dis
+
+    pressao_sim.compute()
+    print(pressao_sim.output['pressao'])
+
+    # distancia.view()
+    # velocidade.view()
+    pressao.view(sim=pressao_sim)
+    plt.show()
+
+if __name__ == '__main__':
+    fuzzing(float(sys.argv[1]), float(sys.argv[2]))
