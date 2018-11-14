@@ -58,7 +58,7 @@ def plot_results(results):
 if __name__ == '__main__':
     dataset = load_dataset('dataset/spambase.random.data')
     v = Validator(dataset)
-    v.cross_validation(k=3)
+    v.cross_validation(k=(3, 5, 7))
     print(v.results)
 
     #r = [

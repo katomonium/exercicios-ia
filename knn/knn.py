@@ -18,32 +18,45 @@ class KNN():
         
         return math.sqrt(d)
 
-    def calc_neighbors(self, test, k):
+    def calc_neighbors(self, test, ks):
         dist = []
         for i in self.training:
             d = self.distance(i, test)
             dist.append((d, i))
 
         dist.sort()
-        n = []
-        for i in range(k):
-            n.append(dist[i][1])
+        n = {}
+        for k in ks:
+            n[k] = []
+
+            for i in range(k):
+                n[k].append(dist[i][1])
         
         return n
 
     def calc_class(self, neighbors):
         labels = {}
 
-        for i in neighbors:
-            k = i[-1]
-            if k in labels:
-                labels[k] += 1
-            else:
-                labels[k] = 1
+        for k in neighbors:
+            labels[k] = {}
+            for i in neighbors[k]:
+                j = i[-1]
+                if j in labels[k]:
+                    labels[k][j] += 1
+                else:
+                    labels[k][j] = 1
 
-        l = []
+        c = {}
         for k in labels:
-            l.append((k, labels[k]))
+            c[k] = []
 
-        l.sort(key=lambda k: k[1], reverse=True)
-        return l[0][0]
+            for i in labels[k]:
+                c[k].append((labels[k][i], i))
+            
+            c[k].sort(key=lambda k: k[1], reverse=False)
+
+        r = {}
+        for k in c:
+            r[k] = c[k][0][1]
+        
+        return r

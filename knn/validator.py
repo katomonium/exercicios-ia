@@ -47,25 +47,30 @@ class Validator:
 
             test = self.chunks[i]
             results = self.validate_test(knn, test, k, i)
-            s = self.calc_statis(results)
+            s = self.calc_statis(results, k)
             self.results.append(s)
 
-    def calc_statis(self, results):
-        s = { 'tp': 0, 'fp': 0, 'tn': 0, 'fn': 0 }
-
-        for r in results:
-            if r[0]:
-                if r[1]:
-                    s['tp'] += 1
+    def calc_statis(self, results, ks):
+        resul = {}
+        for k in ks:
+            s = { 'tp': 0, 'fp': 0, 'tn': 0, 'fn': 0 }
+            
+            for r in results:
+                if r[0]:
+                    if r[1][k]:
+                        s['tp'] += 1
+                    else:
+                        s['fn'] += 1
                 else:
-                    s['fn'] += 1
-            else:
-                if r[1]:
-                    s['fp'] += 1
-                else:
-                    s['tn'] += 1
-        p = s['tp'] / (s['tp'] + s['fp'])
-        r = s['tp'] / (s['fn'] + s['tp'])
-        f1 = 2 * (p * r) / (p + r)
+                    if r[1][k]:
+                        s['fp'] += 1
+                    else:
+                        s['tn'] += 1
+            
+            p = s['tp'] / (s['tp'] + s['fp'])
+            r = s['tp'] / (s['fn'] + s['tp'])
+            f1 = 2 * (p * r) / (p + r)
 
-        return (p, r, f1)
+            resul[k] = (p, r, f1)
+
+        return resul
