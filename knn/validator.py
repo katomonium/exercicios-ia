@@ -34,8 +34,9 @@ class Validator:
             r = knn.classify(d, k)
             results.append((d[-1], r))
             count += 1
-            progress(count, len(test), 'validating test_set {}'.format(i))
-
+            progress(count, len(test), 'test_set {}'.format(i))
+        
+        print()
         return results
 
     def cross_validation(self, k):
