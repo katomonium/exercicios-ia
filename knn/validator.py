@@ -26,6 +26,7 @@ class Validator:
         self.n_chunks = n_chunks
         self.chunks = list(split(dataset, n_chunks))
         self.results = []
+        self.matrix = []
 
     def validate_test(self, knn, test, k, i):
         count = 0
@@ -47,11 +48,12 @@ class Validator:
 
             test = self.chunks[i]
             results = self.validate_test(knn, test, ks, i)
-            s = self.calc_statis(results, ks)
-            self.results.append(s)
+            self.calc_statis(results, ks)
+            
 
     def calc_statis(self, results, ks):
         resul = {}
+        matrix = {}
         for k in ks:
             s = { 'tp': 0, 'fp': 0, 'tn': 0, 'fn': 0 }
 
@@ -67,10 +69,23 @@ class Validator:
                     else:
                         s['tn'] += 1
 
-            p = s['tp'] / (s['tp'] + s['fp'])
-            r = s['tp'] / (s['fn'] + s['tp'])
-            f1 = 2 * (p * r) / (p + r)
+            try:
+                p = s['tp'] / (s['tp'] + s['fp'])
+            except ZeroDivisionError:
+                p = 0.0
+            
+            try:
+                r = s['tp'] / (s['fn'] + s['tp'])
+            except ZeroDivisionError:
+                r = 0.0
+            
+            try:
+                f1 = 2 * (p * r) / (p + r)
+            except ZeroDivisionError:
+                f1 = 0.0
 
             resul[k] = (p, r, f1)
+            matrix[k] = s
 
-        return resul
+        self.matrix.append(matrix)
+        self.results.append(resul)
