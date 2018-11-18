@@ -26,7 +26,7 @@ class Validator:
         self.n_chunks = n_chunks
         self.chunks = list(split(dataset, n_chunks))
         self.results = []
-    
+
     def validate_test(self, knn, test, k, i):
         count = 0
         results = []
@@ -35,26 +35,26 @@ class Validator:
             results.append((d[-1], r))
             count += 1
             progress(count, len(test), 'test_set {}'.format(i))
-        
+
         print()
         return results
 
-    def cross_validation(self, k):
+    def cross_validation(self, ks):
         for i in range(self.n_chunks):
             l = self.chunks[:i] + self.chunks[i+1:]
-            training = [item for sublist in l for item in sublist] 
+            training = [item for sublist in l for item in sublist]
             knn = KNN(training)
 
             test = self.chunks[i]
-            results = self.validate_test(knn, test, k, i)
-            s = self.calc_statis(results, k)
+            results = self.validate_test(knn, test, ks, i)
+            s = self.calc_statis(results, ks)
             self.results.append(s)
 
     def calc_statis(self, results, ks):
         resul = {}
         for k in ks:
             s = { 'tp': 0, 'fp': 0, 'tn': 0, 'fn': 0 }
-            
+
             for r in results:
                 if r[0]:
                     if r[1][k]:
@@ -66,7 +66,7 @@ class Validator:
                         s['fp'] += 1
                     else:
                         s['tn'] += 1
-            
+
             p = s['tp'] / (s['tp'] + s['fp'])
             r = s['tp'] / (s['fn'] + s['tp'])
             f1 = 2 * (p * r) / (p + r)

@@ -15,7 +15,7 @@ class KNN():
         d = 0.0
         for i in range(len(a) - 1):
             d += math.pow(a[i] - b[i], 2)
-        
+
         return math.sqrt(d)
 
     def calc_neighbors(self, test, ks):
@@ -31,7 +31,7 @@ class KNN():
 
             for i in range(k):
                 n[k].append(dist[i][1])
-        
+
         return n
 
     def calc_class(self, neighbors):
@@ -52,11 +52,11 @@ class KNN():
 
             for i in labels[k]:
                 c[k].append((labels[k][i], i))
-            
+
             c[k].sort(key=lambda k: k[1], reverse=False)
 
         r = {}
         for k in c:
             r[k] = c[k][0][1]
-        
+
         return r
