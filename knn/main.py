@@ -59,7 +59,7 @@ def plot_results(results, ks):
         plt.savefig('spam_s_k{}'.format(k))
 
 if __name__ == '__main__':
-    dataset = load_dataset('dataset/spambase.data')
+    dataset = load_dataset('dataset/spambase.random.data')
     ks = (3, 5, 7)
 
     v = Validator(dataset)

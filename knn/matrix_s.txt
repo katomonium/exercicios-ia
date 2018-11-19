@@ -1,0 +1,93 @@
+confusion Matrix test set 0 with k=3
+         Spam    ¬Spam
+Spam      185        25
+¬Spam     156       555
+
+confusion Matrix test set 1 with k=3
+         Spam    ¬Spam
+Spam      197        24
+¬Spam     194       505
+
+confusion Matrix test set 2 with k=3
+         Spam    ¬Spam
+Spam      190        21
+¬Spam     150       559
+
+confusion Matrix test set 3 with k=3
+         Spam    ¬Spam
+Spam      172        33
+¬Spam     161       554
+
+confusion Matrix test set 4 with k=3
+         Spam    ¬Spam
+Spam      179        26
+¬Spam     229       486
+
+confusion Matrix average with k=3
+         Spam     ¬Spam
+Spam     184.6    25.8
+¬Spam    178.0    531.8
+
+
+confusion Matrix test set 0 with k=5
+         Spam    ¬Spam
+Spam      127        17
+¬Spam     214       563
+
+confusion Matrix test set 1 with k=5
+         Spam    ¬Spam
+Spam      134        13
+¬Spam     257       516
+
+confusion Matrix test set 2 with k=5
+         Spam    ¬Spam
+Spam      133         6
+¬Spam     207       574
+
+confusion Matrix test set 3 with k=5
+         Spam    ¬Spam
+Spam      109        13
+¬Spam     224       574
+
+confusion Matrix test set 4 with k=5
+         Spam    ¬Spam
+Spam      123        14
+¬Spam     285       498
+
+confusion Matrix average with k=5
+         Spam     ¬Spam
+Spam     125.2    12.6
+¬Spam    237.4    545.0
+
+
+confusion Matrix test set 0 with k=7
+         Spam    ¬Spam
+Spam       87        10
+¬Spam     254       570
+
+confusion Matrix test set 1 with k=7
+         Spam    ¬Spam
+Spam      106         8
+¬Spam     285       521
+
+confusion Matrix test set 2 with k=7
+         Spam    ¬Spam
+Spam       88         3
+¬Spam     252       577
+
+confusion Matrix test set 3 with k=7
+         Spam    ¬Spam
+Spam       76         8
+¬Spam     257       579
+
+confusion Matrix test set 4 with k=7
+         Spam    ¬Spam
+Spam       87        10
+¬Spam     321       502
+
+confusion Matrix average with k=7
+         Spam     ¬Spam
+Spam     88.8    7.8
+¬Spam    273.8    549.8
+
+
